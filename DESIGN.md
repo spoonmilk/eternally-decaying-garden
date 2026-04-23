@@ -25,5 +25,5 @@ that serve to explain concepts, give historical anecdotes, or prompt reflection.
 
 The participants will need some kind of guiding goal or principle to help them decide what to preserve, 
 and ideally there's some way at the end that they can understand what they missed
-and what the impacts of failing to preserve it would be. 
-Is there a way to mechanistically gauge 'success' here, or information lost? Maybe we could index pages for core concepts in some manner.
+and what the impacts of failing to preserve it would be. Is there a way to mechanistically gauge 'success' here, 
+or information lost? Maybe we could index pages for core concepts in some manner.
