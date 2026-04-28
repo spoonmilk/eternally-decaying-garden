@@ -18,9 +18,7 @@ export async function GET(req: NextRequest) {
 
   let res: Response;
   try {
-    res = await fetch(target, {
-      headers: { "User-Agent": "Mozilla/5.0 (compatible; ArchiveBot/1.0)" },
-    });
+    res = await fetch(target, { headers: { "User-Agent": "test" }, });
   } catch {
     return new NextResponse("Fetch failed", { status: 502 });
   }
@@ -48,32 +46,49 @@ export async function GET(req: NextRequest) {
       return `${attr}='/api/proxy?url=${encodeURIComponent(absolute)}'`;
     });
 
-  const injectedScript = `
-<script>
-(function() {
-  document.addEventListener('mouseup', function() {
-    var sel = window.getSelection();
-    if (!sel || sel.isCollapsed) return;
-    var text = sel.toString().trim();
-    if (text.length < 1) return;
-    var range = sel.getRangeAt(0);
-    var rect = range.getBoundingClientRect();
-    window.parent.postMessage({
-      type: 'SELECTION',
-      text: text,
-      rect: { top: rect.top, left: rect.left, width: rect.width, height: rect.height }
-    }, '*');
-  });
-  document.addEventListener('mousedown', function() {
-    window.parent.postMessage({ type: 'CLEAR_SELECTION' }, '*');
-  });
-})();
-</script>`;
+  const updatedScript = `
+  <script>
+  (function() {
+    document.addEventListener('mouseup', function() {
+      // text
+      var sel = window.getSelection();
+      if (!sel || sel.isCollapsed) return;
+      var text = sel.toString().trim();
+      if (text.length < 2) return;
+      var range = sel.getRangeAt(0);
+      var rect = range.getBoundingClientRect();
+      window.parent.postMessage({
+        type: 'SELECTION',
+        text: text,
+        rect: { top: rect.top, left: rect.left, width: rect.width, height: rect.height }
+      }, '*');
+    });
+
+    document.addEventListener('mousedown', function(e) {
+      if (e.target.tagName === 'IMG') return;
+      window.parent.postMessage({ type: 'CLEAR_SELECTION' }, '*');
+    });
+
+    // image
+    document.addEventListener('click', function(e) {
+      var target = e.target;
+      if (target.tagName !== 'IMG') return;
+      e.preventDefault();
+      var rect = target.getBoundingClientRect();
+      window.parent.postMessage({
+        type: 'IMAGE_SELECTION',
+        src: target.src,
+        alt: target.alt || 'image',
+        rect: { top: rect.top, left: rect.left, width: rect.width, height: rect.height }
+      }, '*');
+    });
+  })();
+  </script>`;
 
   if (html.includes("</head>")) {
-    html = html.replace("</head>", injectedScript + "</head>");
+    html = html.replace("</head>", updatedScript + "</head>");
   } else {
-    html = injectedScript + html;
+    html = updatedScript + html;
   }
   return new NextResponse(html, {
     status: res.status,
