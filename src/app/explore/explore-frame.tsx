@@ -17,7 +17,15 @@ function isAllowed(url: string): boolean {
   }
 }
 
-export default function ExploreFrame() {
+function toProxyUrl(url: string): string {
+  return `/api/proxy?url=${encodeURIComponent(url)}`;
+}
+
+interface ExploreFrameProps {
+  onUrlChange?: (url: string) => void;
+}
+
+export default function ExploreFrame({ onUrlChange }: ExploreFrameProps) {
   const [inputValue, setInputValue] = useState(INITIAL_URL);
   const [blockedUrl, setBlockedUrl] = useState<string | null>(null);
   const [canGoBack, setCanGoBack] = useState(false);
@@ -41,7 +49,7 @@ export default function ExploreFrame() {
   }
 
   function iframeReplace(url: string) {
-    iframeRef.current?.contentWindow?.location.replace(url);
+    iframeRef.current?.contentWindow?.location.replace(toProxyUrl(url));
   }
 
   function navigateTo(url: string) {
@@ -57,6 +65,7 @@ export default function ExploreFrame() {
     setBlockedUrl(null);
     pushHistory(normalized);
     lastNavUrl.current = normalized;
+    onUrlChange?.(normalized);
     iframeReplace(normalized);
   }
 
@@ -68,6 +77,7 @@ export default function ExploreFrame() {
     setBlockedUrl(null);
     updateButtons();
     lastNavUrl.current = url;
+    onUrlChange?.(url);
     try {
       iframeRef.current!.contentWindow!.history.back();
     } catch {
@@ -83,6 +93,7 @@ export default function ExploreFrame() {
     setBlockedUrl(null);
     updateButtons();
     lastNavUrl.current = url;
+    onUrlChange?.(url);
     try {
       iframeRef.current!.contentWindow!.history.forward();
     } catch {
@@ -93,20 +104,19 @@ export default function ExploreFrame() {
   function handleLoad() {
     const iframe = iframeRef.current;
     if (!iframe) return;
-    let url: string | undefined;
+    let href: string | undefined;
+    try { href = iframe.contentWindow?.location.href; } catch { return; }
+    if (!href || href === "about:blank") return;
     try {
-      url = iframe.contentWindow?.location.href;
-    } catch {
-      return;
-    }
-    if (!url || url === "about:blank" || url === lastNavUrl.current) return;
-    if (!isAllowed(url)) {
-      iframeReplace(lastNavUrl.current);
-      return;
-    }
-    lastNavUrl.current = url;
-    pushHistory(url);
-    setInputValue(url);
+      const proxyParams = new URL(href, window.location.origin);
+      const realUrl = proxyParams.searchParams.get("url");
+      if (realUrl && realUrl !== lastNavUrl.current) {
+        lastNavUrl.current = realUrl;
+        pushHistory(realUrl);
+        setInputValue(realUrl);
+        onUrlChange?.(realUrl);
+      }
+    } catch { }
   }
 
   return (
@@ -141,7 +151,7 @@ export default function ExploreFrame() {
       <div style={{ flex: 1, position: "relative", overflow: "hidden" }}>
         <iframe
           ref={iframeRef}
-          src={INITIAL_URL}
+          src={toProxyUrl(INITIAL_URL)}
           onLoad={handleLoad}
           style={{ width: "100%", height: "100%", border: "none" }}
           sandbox="allow-downloads allow-forms allow-modals allow-pointer-lock allow-popups allow-same-origin allow-scripts"
