@@ -1,7 +1,7 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
 import type React from "react";
+import { useEffect, useRef, useState } from "react";
 
 const TIME_BUDGET = 180;
 const HIGHLIGHT_BUDGET = 25;
@@ -12,7 +12,33 @@ export type Preserved = {
   kind: "text" | "image";
   text?: string;
   imageSrc?: string;
+  savedAt: number; // For ordering of saves in retrospective/summary view
 };
+
+// type PreservationState = {
+//   preserved: Preserved[];
+//   addPreserved: (entry: Omit<Preserved, "id" | "savedAt">) => void;
+//   clearPreserved: () => void;
+// };
+//
+// export const usePreservationStore = create<PreservationState>()(
+//   persist(
+//     (set, get) => ({
+//       preserved: [],
+//       addPreserved: (entry) => {
+//         const id = String(get().preserved.length + 1);
+//         const savedAt = Date.now();
+//         set((state) => ({
+//           preserved: [...state.preserved, { ...entry, id, savedAt }],
+//         }));
+//       },
+//       clearPreserved: () => set({ preserved: [] }),
+//     }),
+//     {
+//       name: "preservation-store",
+//     },
+//   ),
+// );
 
 export function usePreservation(currentUrl?: React.RefObject<string>) {
   const [timeLeft, setTimeLeft] = useState(TIME_BUDGET);
@@ -24,6 +50,7 @@ export function usePreservation(currentUrl?: React.RefObject<string>) {
     null,
   );
   const idCounter = useRef(0);
+  // const addPreserved = usePreservationStore((s) => s.addPreserved);
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -60,11 +87,13 @@ export function usePreservation(currentUrl?: React.RefObject<string>) {
     if (!selection || budgetLeft <= 0 || timeLeft <= 0) return;
     const id = String(++idCounter.current);
     const url = currentUrl?.current ?? "";
+    const savedAt = Date.now();
     const entry: Preserved =
       selectionKind === "image"
-        ? { id, url, kind: "image", imageSrc: selection }
-        : { id, url, kind: "text", text: selection };
+        ? { id, url, kind: "image", imageSrc: selection, savedAt }
+        : { id, url, kind: "text", text: selection, savedAt };
     setPreserved((prev) => [...prev, entry]);
+    // addPreserved(entry);
     setBudget((b) => b - 1);
     setSelection(null);
     setPopupPos(null);

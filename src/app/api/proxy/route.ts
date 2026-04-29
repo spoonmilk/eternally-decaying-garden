@@ -12,13 +12,17 @@ export async function GET(req: NextRequest) {
     return new NextResponse("Invalid url", { status: 400 });
   }
   const allowed = ["cel.cs.brown.edu"];
-  if (!allowed.some((d) => parsed.hostname === d || parsed.hostname.endsWith("." + d))) {
+  if (
+    !allowed.some(
+      (d) => parsed.hostname === d || parsed.hostname.endsWith("." + d),
+    )
+  ) {
     return new NextResponse("Domain not allowed", { status: 403 });
   }
 
   let res: Response;
   try {
-    res = await fetch(target, { headers: { "User-Agent": "test" }, });
+    res = await fetch(target, { headers: { "User-Agent": "test" } });
   } catch {
     return new NextResponse("Fetch failed", { status: 502 });
   }
