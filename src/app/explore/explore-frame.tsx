@@ -1,180 +1,97 @@
 "use client";
 
-import { useRef, useState } from "react";
-
-const INITIAL_URL = "https://cel.cs.brown.edu/csci-1377-s26/";
-
-const ALLOWED_DOMAINS = ["cel.cs.brown.edu"];
-
-function isAllowed(url: string): boolean {
-  try {
-    const { hostname } = new URL(url);
-    return ALLOWED_DOMAINS.some(
-      (d) => hostname === d || hostname.endsWith("." + d),
-    );
-  } catch {
-    return false;
-  }
-}
-
-function toProxyUrl(url: string): string {
-  return `/api/proxy?url=${encodeURIComponent(url)}`;
-}
+import { useEffect, useRef } from "react";
+import { SITES, type SiteKey } from "./sites";
 
 interface ExploreFrameProps {
-  onUrlChange?: (url: string) => void;
+    siteKey?: SiteKey;
+    onSelection?: (text: string, rect: DOMRect) => void;
+    onImageSelection?: (src: string, rect: DOMRect) => void;
+    onClearSelection?: () => void;
 }
 
-export default function ExploreFrame({ onUrlChange }: ExploreFrameProps) {
-  const [inputValue, setInputValue] = useState(INITIAL_URL);
-  const [blockedUrl, setBlockedUrl] = useState<string | null>(null);
-  const [canGoBack, setCanGoBack] = useState(false);
-  const [canGoForward, setCanGoForward] = useState(false);
+// Some notes from Alex:
+// This was starting to get refactored as frame to just render static html tags in-frame but there are issues
+// with style continuity/containerizaiton that were driving me actually bonkers. Anyways, now it just serves
+// from sites in the /public directory.
+export default function ExploreFrame({
+    siteKey = "csci-1377",
+    onSelection,
+    onImageSelection,
+    onClearSelection,
+}: ExploreFrameProps) {
+    const iframeRef = useRef<HTMLIFrameElement>(null);
 
-  const iframeRef = useRef<HTMLIFrameElement>(null);
-  const navHistory = useRef<string[]>([INITIAL_URL]);
-  const historyIdx = useRef(0);
-  const lastNavUrl = useRef(INITIAL_URL);
+    const onSelectionRef = useRef(onSelection);
+    const onImageSelectionRef = useRef(onImageSelection);
+    const onClearSelectionRef = useRef(onClearSelection);
+    useEffect(() => {
+        onSelectionRef.current = onSelection;
+    }, [onSelection]);
+    useEffect(() => {
+        onImageSelectionRef.current = onImageSelection;
+    }, [onImageSelection]);
+    useEffect(() => {
+        onClearSelectionRef.current = onClearSelection;
+    }, [onClearSelection]);
 
-  function updateButtons() {
-    setCanGoBack(historyIdx.current > 0);
-    setCanGoForward(historyIdx.current < navHistory.current.length - 1);
-  }
+    function handleLoad() {
+        const iframe = iframeRef.current;
+        const doc = iframe?.contentDocument;
+        if (!doc) return;
 
-  function pushHistory(url: string) {
-    navHistory.current = navHistory.current.slice(0, historyIdx.current + 1);
-    navHistory.current.push(url);
-    historyIdx.current = navHistory.current.length - 1;
-    updateButtons();
-  }
+        function iframeOffset() {
+            const r = iframe!.getBoundingClientRect();
+            return { x: r.left, y: r.top };
+        }
 
-  function iframeReplace(url: string) {
-    iframeRef.current?.contentWindow?.location.replace(toProxyUrl(url));
-  }
+        doc.addEventListener("mouseup", () => {
+            const sel = doc.getSelection();
+            if (!sel || sel.isCollapsed) return;
+            const text = sel.toString().trim();
+            if (text.length < 2) return;
+            const r = sel.getRangeAt(0).getBoundingClientRect();
+            const { x, y } = iframeOffset();
+            onSelectionRef.current?.(
+                text,
+                new DOMRect(r.left + x, r.top + y, r.width, r.height),
+            );
+        });
 
-  function navigateTo(url: string) {
-    let normalized = url.trim();
-    if (normalized && !/^[a-zA-Z][a-zA-Z0-9+\-.]*:\/\//.test(normalized)) {
-      normalized = "https://" + normalized;
+        doc.addEventListener("mousedown", (e) => {
+            if ((e.target as HTMLElement).tagName !== "IMG") {
+                onClearSelectionRef.current?.();
+            }
+        });
+
+        doc.addEventListener("click", (e) => {
+            const target = e.target as HTMLElement;
+            if (target.tagName !== "IMG") return;
+            e.preventDefault();
+            const r = target.getBoundingClientRect();
+            const { x, y } = iframeOffset();
+            onImageSelectionRef.current?.(
+                (target as HTMLImageElement).src,
+                new DOMRect(r.left + x, r.top + y, r.width, r.height),
+            );
+        });
     }
-    setInputValue(normalized);
-    if (!isAllowed(normalized)) {
-      setBlockedUrl(normalized);
-      return;
-    }
-    setBlockedUrl(null);
-    pushHistory(normalized);
-    lastNavUrl.current = normalized;
-    onUrlChange?.(normalized);
-    iframeReplace(normalized);
-  }
 
-  function goBack() {
-    if (historyIdx.current <= 0) return;
-    historyIdx.current--;
-    const url = navHistory.current[historyIdx.current];
-    setInputValue(url);
-    setBlockedUrl(null);
-    updateButtons();
-    lastNavUrl.current = url;
-    onUrlChange?.(url);
-    try {
-      iframeRef.current!.contentWindow!.history.back();
-    } catch {
-      iframeReplace(url);
-    }
-  }
+    const site = SITES[siteKey];
 
-  function goForward() {
-    if (historyIdx.current >= navHistory.current.length - 1) return;
-    historyIdx.current++;
-    const url = navHistory.current[historyIdx.current];
-    setInputValue(url);
-    setBlockedUrl(null);
-    updateButtons();
-    lastNavUrl.current = url;
-    onUrlChange?.(url);
-    try {
-      iframeRef.current!.contentWindow!.history.forward();
-    } catch {
-      iframeReplace(url);
-    }
-  }
-
-  function handleLoad() {
-    const iframe = iframeRef.current;
-    if (!iframe) return;
-    let href: string | undefined;
-    try { href = iframe.contentWindow?.location.href; } catch { return; }
-    if (!href || href === "about:blank") return;
-    try {
-      const proxyParams = new URL(href, window.location.origin);
-      const realUrl = proxyParams.searchParams.get("url");
-      if (realUrl && realUrl !== lastNavUrl.current) {
-        lastNavUrl.current = realUrl;
-        pushHistory(realUrl);
-        setInputValue(realUrl);
-        onUrlChange?.(realUrl);
-      }
-    } catch { }
-  }
-
-  return (
-    <>
-      <nav
-        style={{
-          borderBottom: "1px solid",
-          padding: 8,
-          display: "flex",
-          gap: 8,
-        }}
-      >
-        <button type="button" onClick={goBack} disabled={!canGoBack}>
-          ←
-        </button>
-        <button type="button" onClick={goForward} disabled={!canGoForward}>
-          →
-        </button>
-        <input
-          type="text"
-          value={inputValue}
-          onChange={(e) => setInputValue(e.target.value)}
-          onKeyDown={(e) => {
-            if (e.key === "Enter") navigateTo(inputValue);
-          }}
-          style={{ flex: 1, border: "1px solid" }}
-        />
-        <button type="button" onClick={() => navigateTo(inputValue)}>
-          Go
-        </button>
-      </nav>
-      <div style={{ flex: 1, position: "relative", overflow: "hidden" }}>
-        <iframe
-          ref={iframeRef}
-          src={toProxyUrl(INITIAL_URL)}
-          onLoad={handleLoad}
-          style={{ width: "100%", height: "100%", border: "none" }}
-          sandbox="allow-downloads allow-forms allow-modals allow-pointer-lock allow-popups allow-same-origin allow-scripts"
-        />
-        {blockedUrl && (
-          <div
-            style={{
-              position: "absolute",
-              inset: 0,
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              padding: 24,
-              textAlign: "center",
-              background: "white",
-            }}
-          >
-            <p>
-              <strong>{blockedUrl}</strong> is not in the allowed sites list.
-            </p>
-          </div>
-        )}
-      </div>
-    </>
-  );
+    return (
+        <div style={{ flex: 1, position: "relative", overflow: "hidden" }}>
+            <iframe
+                ref={iframeRef}
+                src={site.dir + site.entryPage}
+                onLoad={handleLoad}
+                style={{
+                    width: "100%",
+                    height: "100%",
+                    border: "none",
+                    display: "block",
+                }}
+            />
+        </div>
+    );
 }

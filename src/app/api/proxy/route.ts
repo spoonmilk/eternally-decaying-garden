@@ -46,50 +46,6 @@ export async function GET(req: NextRequest) {
       return `${attr}='/api/proxy?url=${encodeURIComponent(absolute)}'`;
     });
 
-  const updatedScript = `
-  <script>
-  (function() {
-    document.addEventListener('mouseup', function() {
-      // text
-      var sel = window.getSelection();
-      if (!sel || sel.isCollapsed) return;
-      var text = sel.toString().trim();
-      if (text.length < 2) return;
-      var range = sel.getRangeAt(0);
-      var rect = range.getBoundingClientRect();
-      window.parent.postMessage({
-        type: 'SELECTION',
-        text: text,
-        rect: { top: rect.top, left: rect.left, width: rect.width, height: rect.height }
-      }, '*');
-    });
-
-    document.addEventListener('mousedown', function(e) {
-      if (e.target.tagName === 'IMG') return;
-      window.parent.postMessage({ type: 'CLEAR_SELECTION' }, '*');
-    });
-
-    // image
-    document.addEventListener('click', function(e) {
-      var target = e.target;
-      if (target.tagName !== 'IMG') return;
-      e.preventDefault();
-      var rect = target.getBoundingClientRect();
-      window.parent.postMessage({
-        type: 'IMAGE_SELECTION',
-        src: target.src,
-        alt: target.alt || 'image',
-        rect: { top: rect.top, left: rect.left, width: rect.width, height: rect.height }
-      }, '*');
-    });
-  })();
-  </script>`;
-
-  if (html.includes("</head>")) {
-    html = html.replace("</head>", updatedScript + "</head>");
-  } else {
-    html = updatedScript + html;
-  }
   return new NextResponse(html, {
     status: res.status,
     headers: {
