@@ -1,4 +1,15 @@
+import { useEffect, useState } from "react";
+import type { Preserved } from "../explore/use-preservation";
+
 export default function Summary() {
+  const [preserved, setPreserved] = useState<Preserved[]>([]);
+
+  // read saved items from sessionStorage when page loads
+  useEffect(() => {
+    const data = JSON.parse(sessionStorage.getItem("preserved") ?? "[]");
+    setPreserved(data);
+  }, []);
+
   return (
     <main
       style={{
