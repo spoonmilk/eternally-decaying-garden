@@ -85,6 +85,14 @@ export function usePreservation(currentUrl?: React.RefObject<string>) {
     return () => clearInterval(interval);
   }, [preserved, router]);
 
+  // also autonavigate to summary page when budget runs out?
+  useEffect(() => {
+  if (wordBudgetLeft <= 0 && preserved.length > 0) {
+    sessionStorage.setItem("preserved", JSON.stringify(preserved));
+    router.push("/summary");
+  }
+}, [wordBudgetLeft, preserved, router]);
+
   function onSelection(text: string, rect: DOMRect) {
     if (!text || text.length < 1) return;
     setSelectionKind("text");
