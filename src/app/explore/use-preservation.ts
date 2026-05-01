@@ -2,6 +2,7 @@
 
 import type React from "react";
 import { useEffect, useRef, useState } from "react";
+import { useRouter } from "next/navigation";
 
 const TIME_BUDGET = 180;
 const MAX_WORD_BUDGET = 500;
@@ -56,6 +57,7 @@ function truncateToWordLimit(text: string, maxWords: number) {
 }
 
 export function usePreservation(currentUrl?: React.RefObject<string>) {
+  const router = useRouter();
   const [timeLeft, setTimeLeft] = useState(TIME_BUDGET);
   const [wordBudgetLeft, setWordBudget] = useState(MAX_WORD_BUDGET);
   const [preserved, setPreserved] = useState<Preserved[]>([]);
@@ -73,13 +75,23 @@ export function usePreservation(currentUrl?: React.RefObject<string>) {
       setTimeLeft((t) => {
         if (t <= 1) {
           clearInterval(interval);
+          sessionStorage.setItem("preserved", JSON.stringify(preserved));
+          router.push("/summary");
           return 0;
         }
         return t - 1;
       });
     }, 1000);
     return () => clearInterval(interval);
-  }, []);
+  }, [preserved, router]);
+
+  // also autonavigate to summary page when budget runs out?
+  useEffect(() => {
+  if (wordBudgetLeft <= 0 && preserved.length > 0) {
+    sessionStorage.setItem("preserved", JSON.stringify(preserved));
+    router.push("/summary");
+  }
+}, [wordBudgetLeft, preserved, router]);
 
   function onSelection(text: string, rect: DOMRect) {
     if (!text || text.length < 1) return;
@@ -163,6 +175,7 @@ export function usePreservation(currentUrl?: React.RefObject<string>) {
   function dismiss() {
     setSelection(null);
     setPopupPos(null);
+    window.getSelection()?.removeAllRanges();
   }
 
   return {

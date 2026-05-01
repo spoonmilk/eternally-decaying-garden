@@ -29,6 +29,15 @@ and what the impacts of failing to preserve it would be. Is there a way to mecha
 or information lost? Maybe we could index pages for core concepts in some manner.
 
 ## Brainstorm sesh for summary page
+Overall pick:
+Split screen (inspired by git diff)
+* splits the screen into two columns: left is what you saved, right is what rotted away
+* the right column shows grey placeholder blocks sized roughly to how much text was lost
+* a percentage at the top like "you preserved x% of available content" makes the loss feel concrete
+* pros: directly shows the user with what they missed, the visual contrast between saved and lost is powerful, percentage gives a numeric/score-like feeling
+* cons: requires knowing the total amount of content available to calculate what was lost, so would need to store the full text of every page somewhere to compare against (?)
+
+Other backup ideas we considered...
 Archive reciept/list 
 * shows every saved item in the order it was saved, like a receipt or print log
 * each entry shows the source URL, the text or image, and a timestamp of when it was saved?
@@ -36,13 +45,6 @@ Archive reciept/list
 * feels like finding a damaged printout in a filing cabinet
 * pros: fits the decayed aesthetic, chronological order tells a story of how the user moved through the content
 * cons: doesn't show what was lost, just what was saved, so the emotional impact of link rot is weaker, can feel like just a list without deeper meaning
-
-Split screen (inspired by git diff)
-* splits the screen into two columns: left is what you saved, right is what rotted away
-* the right column shows grey placeholder blocks sized roughly to how much text was lost
-* a percentage at the top like "you preserved x% of available content" makes the loss feel concrete
-* pros: directly shows the user with what they missed, the visual contrast between saved and lost is powerful, percentage gives a numeric/score-like feeling
-* cons: requires knowing the total amount of content available to calculate what was lost, so would need to store the full text of every page somewhere to compare against (?)
 
 Annotated index
 * groups saved items by their source URL, like the index at the back of an academic book
