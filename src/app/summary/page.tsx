@@ -2,45 +2,62 @@
 
 import { useEffect, useState } from "react";
 import type { Preserved } from "../explore/use-preservation";
+import {
+  type LostBlock,
+  computeLostBlocks,
+  countTotalSiteWords,
+  getWordCount,
+} from "./summary-utils";
+import SummaryLost from "./summary-lost";
+import SummaryPreserved from "./summary-preserved";
+import SummaryStats from "./overview-stats";
 
 export default function Summary() {
   const [preserved, setPreserved] = useState<Preserved[]>([]);
+  const [totalSiteWords, setTotalSiteWords] = useState<number | null>(null);
+  const [lostBlocks, setLostBlocks] = useState<LostBlock[]>([]);
 
-  // read saved items from sessionStorage when page loads
   useEffect(() => {
-    const data = JSON.parse(sessionStorage.getItem("preserved") ?? "[]");
+    const data: Preserved[] = JSON.parse(
+      sessionStorage.getItem("preserved") ?? "[]",
+    );
     setPreserved(data);
+
+    countTotalSiteWords().then(setTotalSiteWords);
+    computeLostBlocks(data).then(setLostBlocks);
   }, []);
 
+  const wordsPreserved = preserved.reduce(
+    (sum, item) => sum + getWordCount(item),
+    0,
+  );
+  const wordsLost =
+    totalSiteWords !== null
+      ? Math.max(0, totalSiteWords - wordsPreserved)
+      : null;
+  const percentPreserved = totalSiteWords
+    ? Math.round((wordsPreserved / totalSiteWords) * 100)
+    : null;
+
   return (
-    <main
-      style={{
-        display: "flex",
-        flexDirection: "column",
-        alignItems: "center",
-        justifyContent: "center",
-        minHeight: "100vh",
-      }}
-    >
-      {/* currently just simply displays what the user saved from explore page 
-      let's discuss plans/more effective layout in person!!! */}
-      <div style={{ border: "1px solid", width: 600 }}>
-        <div style={{ borderBottom: "1px solid", padding: 8 }}>
-          Reflecting back on what you chose to preserve...
-        </div>
-        <ul style={{ margin: 0, padding: 8 }}>
-          {preserved.map((item) => (
-            <li key={item.id} style={{ border: "1px solid", padding: 8, marginBottom: 8 }}>
-              <span style={{ fontSize: 10, display: "block", marginBottom: 4 }}>
-                {item.url.replace("https://", "")}
-              </span>
-              {item.kind === "image"
-                ? <img src={item.imageSrc} alt="" style={{ width: "100%" }} />
-                : <p style={{ fontSize: 10, margin: 0 }}>"{item.text}"</p>
-              }
-            </li>
-          ))}
-        </ul>
+    <main style={{ minHeight: "100vh", padding: 24 }}>
+      <SummaryStats
+        totalSiteWords={totalSiteWords}
+        wordsPreserved={wordsPreserved}
+        wordsLost={wordsLost}
+        percentPreserved={percentPreserved}
+      />
+
+      <div style={{ display: "flex", height: "calc(100vh - 80px)" }}>
+        <SummaryPreserved
+          preserved={preserved}
+          wordsPreserved={wordsPreserved}
+        />
+        <SummaryLost
+          lostBlocks={lostBlocks}
+          wordsLost={wordsLost}
+          totalSiteWords={totalSiteWords}
+        />
       </div>
     </main>
   );

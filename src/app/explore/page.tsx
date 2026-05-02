@@ -1,6 +1,8 @@
 "use client";
 
 import ExploreFrame from "./explore-frame";
+import ExploreHeader from "./explore-header";
+import ExploreSidebar from "./explore-sidebar";
 import SelectionPopup from "./selection-popup";
 import { usePreservation } from "./use-preservation";
 
@@ -19,25 +21,9 @@ export default function Explore() {
     dismiss,
   } = usePreservation();
 
-  const mins = String(Math.floor(timeLeft / 60)).padStart(2, "0");
-  const secs = String(timeLeft % 60).padStart(2, "0");
-
   return (
     <div style={{ display: "flex", flexDirection: "column", height: "100vh" }}>
-      <header
-        style={{
-          border: "1px solid",
-          borderBottom: "1px solid",
-          padding: 8,
-          display: "flex",
-          justifyContent: "space-between",
-        }}
-      >
-        <span style={{ color: timeLeft < 20 ? "red" : "inherit" }}>
-          Timer {mins}:{secs}
-        </span>
-        <span>Budget: {budgetLeft} remaining</span>
-      </header>
+      <ExploreHeader timeLeft={timeLeft} budgetLeft={budgetLeft} />
 
       <div style={{ display: "flex", flex: 1, overflow: "hidden" }}>
         <div
@@ -56,66 +42,7 @@ export default function Explore() {
           />
         </div>
 
-        <aside
-          style={{
-            display: "flex",
-            flexDirection: "column",
-            width: 240,
-            overflow: "hidden",
-          }}
-        >
-          <div style={{ borderBottom: "1px solid", padding: 8 }}>
-            Preserved ({preserved.length})
-          </div>
-
-          <ul
-            style={{
-              flex: 1,
-              overflow: "auto",
-              padding: 8,
-              listStyle: "none",
-              margin: 0,
-            }}
-          >
-            {preserved.map((item) => {
-              const previewText =
-                item.kind === "text" && item.text
-                  ? item.text.length > 500
-                    ? item.text.slice(0, 500) + "…"
-                    : item.text
-                  : null;
-              return (
-                <li
-                  key={item.id}
-                  style={{ border: "1px solid", padding: 8, marginBottom: 8 }}
-                >
-                  {item.kind === "image" ? (
-                    <img
-                      src={item.imageSrc}
-                      alt=""
-                      style={{ width: "100%", marginTop: 4 }}
-                    />
-                  ) : (
-                    <p style={{ fontSize: 9 }}>"{previewText}"</p>
-                  )}
-                </li>
-              );
-            })}
-          </ul>
-
-          <div
-            style={{
-              borderTop: "1px solid",
-              padding: 8,
-              display: "flex",
-              flexDirection: "column",
-              gap: 4,
-            }}
-          >
-            <button type="button">+ Highlight</button>
-            <button type="button">+ Note</button>
-          </div>
-        </aside>
+        <ExploreSidebar preserved={preserved} />
       </div>
 
       {selection && popupPos && (
