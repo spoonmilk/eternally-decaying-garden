@@ -105,7 +105,11 @@ export default function ExploreFrame({ onUrlChange }: ExploreFrameProps) {
     const iframe = iframeRef.current;
     if (!iframe) return;
     let href: string | undefined;
-    try { href = iframe.contentWindow?.location.href; } catch { return; }
+    try {
+      href = iframe.contentWindow?.location.href;
+    } catch {
+      return;
+    }
     if (!href || href === "about:blank") return;
     try {
       const proxyParams = new URL(href, window.location.origin);
@@ -116,11 +120,11 @@ export default function ExploreFrame({ onUrlChange }: ExploreFrameProps) {
         setInputValue(realUrl);
         onUrlChange?.(realUrl);
       }
-    } catch { }
+    } catch {}
   }
 
   return (
-    <>
+    <div className="explore-frame">
       <nav
         style={{
           borderBottom: "1px solid",
@@ -175,6 +179,6 @@ export default function ExploreFrame({ onUrlChange }: ExploreFrameProps) {
           </div>
         )}
       </div>
-    </>
+    </div>
   );
 }

@@ -14,7 +14,8 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   title: "The Internet as an Eternally Decaying Garden",
-  description: "An interactive experience about link rot and digital preservation.",
+  description:
+    "An interactive experience about link rot and digital preservation.",
 };
 
 export default function RootLayout({
@@ -27,6 +28,12 @@ export default function RootLayout({
       lang="en"
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
+      <head>
+        <link
+          rel="stylesheet"
+          href="https://use.typekit.net/ewq3amz.css"
+        ></link>
+      </head>
       <body className="min-h-full flex flex-col">{children}</body>
     </html>
   );
