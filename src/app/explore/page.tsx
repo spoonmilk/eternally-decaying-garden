@@ -137,10 +137,7 @@ export default function Explore() {
   const activeSetId = getSetForUrl(currentUrl);
 
   useEffect(() => {
-    setOpenSetIds((prevOpenSetIds) => {
-      if (prevOpenSetIds.includes(activeSetId)) return prevOpenSetIds;
-      return [...prevOpenSetIds, activeSetId];
-    });
+    setOpenSetIds([activeSetId]);
   }, [activeSetId]);
 
   return (
@@ -188,22 +185,20 @@ export default function Explore() {
             const itemsInSet = preserved.filter((item) => item.setId === setId);
 
             return (
-              <details
+              <div
                 key={setId}
-                className="archive-accordion"
-                open={openSetIds.includes(setId)}
-                onToggle={(event) => {
-                  const isOpen = event.currentTarget.open;
-                  setOpenSetIds((prevOpenSetIds) => {
-                    if (isOpen) {
-                      if (prevOpenSetIds.includes(setId)) return prevOpenSetIds;
-                      return [...prevOpenSetIds, setId];
-                    }
-                    return prevOpenSetIds.filter((id) => id !== setId);
-                  });
-                }}
+                className={`archive-accordion${openSetIds.includes(setId) ? " is-open" : ""}`}
               >
-                <summary>
+                <div
+                  className="archive-accordion-summary"
+                  onClick={() => {
+                    setOpenSetIds((prev) =>
+                      prev.includes(setId)
+                        ? prev.filter((id) => id !== setId)
+                        : [...prev, setId],
+                    );
+                  }}
+                >
                   <div className="summary-left">
                     <span className="set-name">{`Set ${setId}`}</span>
                     <span className="set-count">{`(${itemsInSet.length})`}</span>
@@ -223,8 +218,8 @@ export default function Explore() {
                     <path stroke="none" d="M0 0h24v24H0z" fill="none" />
                     <path d="M6 9l6 6l6 -6" />
                   </svg>
-                </summary>
-                <div className="archive-set-wrapper">
+                </div>
+                {openSetIds.includes(setId) && (
                   <ul className="archive-set-list">
                     {itemsInSet.length === 0 ? (
                       <li>Nothing has been saved yet.</li>
@@ -255,24 +250,11 @@ export default function Explore() {
                       })
                     )}
                   </ul>
-                </div>
-              </details>
+                )}
+              </div>
             );
           })}
         </div>
-
-        {/* <div
-          style={{
-            borderTop: "1px solid",
-            padding: 8,
-            display: "flex",
-            flexDirection: "column",
-            gap: 4,
-          }}
-        >
-          <button type="button">+ Highlight</button>
-          <button type="button">+ Note</button>
-        </div> */}
       </aside>
 
       {/* save for images */}
@@ -308,19 +290,10 @@ export default function Explore() {
                   <path d="M12 5l0 14" />
                   <path d="M5 12l14 0" />
                 </svg>
-                {selectionKind === "image" ? "Save Image" : "Save"}
+                {selectionKind === "image" ? "Save Image" : "Save Text"}
               </button>
             );
           })()}
-          {/* <button
-            type="button"
-            onClick={() => {
-              setSelection(null);
-              setPopupPos(null);
-            }}
-          >
-            ✕
-          </button> */}
         </div>
       )}
     </main>
