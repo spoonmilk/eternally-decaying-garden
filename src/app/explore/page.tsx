@@ -7,12 +7,24 @@ const TIME_BUDGET = 180;
 const HIGHLIGHT_BUDGET = 25;
 type SetId = 1 | 2 | 3;
 
+// placeholders for now just to get navigation working
 const PAGE_SETS: Record<SetId, string[]> = {
-  1: ["https://cel.cs.brown.edu/csci-1377-s26/"],
-  2: [],
-  3: [],
+  1: [
+    "https://medium.com/@108/just-like-hamburger-exactly-like-hamburger-5ba6f95c2b32",
+    "https://alexwlchan.net/2025/social-media-scrapbook/",
+    "https://plorg.neocities.org/",
+  ],
+  2: [
+    "https://theforest.link/",
+    "https://itch.io/jam/death-of-an-mmo-game-jam",
+    "https://video.rhizome.org/w/qTLXF3qeiwWeUMLUhNH5Fy",
+  ],
+  3: [
+    "https://news.dyne.org/the-future-was-federated/",
+    "https://alexwlchan.net/2025/meeting-my-younger-self/",
+    "https://www.pewresearch.org/wp-content/uploads/sites/20/2024/05/pl_2024.05.17_link-rot_report.pdf",
+  ],
 };
-
 const SET_IDS: SetId[] = [1, 2, 3];
 
 // get which set the url belongs to
@@ -41,7 +53,9 @@ export default function Explore() {
   const [preserved, setPreserved] = useState<Preserved[]>([]);
   const [selection, setSelection] = useState<string | null>(null);
   const [selectionKind, setSelectionKind] = useState<"text" | "image">("text");
-  const defaultRef = useRef("https://cel.cs.brown.edu/csci-1377-s26/");
+  const defaultRef = useRef(
+    "https://medium.com/@108/just-like-hamburger-exactly-like-hamburger-5ba6f95c2b32",
+  );
   const [currentUrl, setCurrentUrl] = useState(defaultRef.current);
   const [openSetIds, setOpenSetIds] = useState<SetId[]>([
     getSetForUrl(defaultRef.current),
@@ -176,6 +190,8 @@ export default function Explore() {
             defaultRef.current = url;
             setCurrentUrl(url);
           }}
+          timerRunning={timeLeft > 0}
+          activeSetId={activeSetId}
         />
       </div>
       <aside className="right">
