@@ -1,19 +1,31 @@
-export default function Home() {
+import Link from "next/link";
+import fs from "fs/promises";
+import path from "path";
+import ReactMarkdown from "react-markdown";
+
+export default async function Home() {
+  const textFilePath = path.join(process.cwd(), "content", "introduction.md");
+  const text = await fs.readFile(textFilePath, "utf8");
+
   return (
-    <main>
+    <main
+      style={{
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "center",
+        justifyContent: "center",
+        minHeight: "100vh",
+      }}
+    >
       <div style={{ border: "1px solid", width: 600 }}>
-        <div style={{ borderBottom: "1px solid", padding: 8 }}>
+        <div
+          style={{ borderBottom: "1px solid", padding: 8, fontWeight: "500" }}
+        >
           The Internet as an Eternally Decaying Garden
         </div>
 
         <section style={{ padding: 24 }}>
-          <h1>Lorem ipsum dolor sit amet</h1>
-          <p>
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do
-            eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim
-            ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut
-            aliquip ex ea commodo consequat.
-          </p>
+          <ReactMarkdown>{text}</ReactMarkdown>
         </section>
 
         <nav
@@ -22,10 +34,13 @@ export default function Home() {
             padding: 8,
             display: "flex",
             justifyContent: "space-between",
+            fontWeight: "500",
           }}
         >
           <button type="button">← Back</button>
-          <button type="button">Next →</button>
+          <Link href="/explore" passHref>
+            <button type="button">Next →</button>
+          </Link>
         </nav>
       </div>
     </main>

@@ -84,6 +84,11 @@ span.number,
   color: var(--text-primary);
 }
 
+.title:hover {
+  color: var(--text-secondary);
+  transition: 300ms;
+}
+
 span.name,
 .set-count {
   font-weight: 400;
@@ -216,7 +221,7 @@ span.name,
   display: flex;
   flex-flow: row nowrap;
   align-items: center;
-  gap: 12px;
+  gap: 10px;
 }
 
 .highlight-button:hover {
@@ -224,7 +229,13 @@ span.name,
 }
 
 .highlight-button svg {
-  width: 18px;
+  padding-bottom: 3px;
+}
+
+.button-text {
+  display: flex;
+  flex-flow: row nowrap;
+  gap: 6px;
 }
 
 .explore-frame {
@@ -232,6 +243,13 @@ span.name,
   height: 100%;
   display: flex;
   flex-flow: column nowrap;
+}
+
+.window-name {
+  display: flex;
+  flex-flow: row nowrap;
+  align-items: center;
+  gap: 8px;
 }
 
 .search-input input {

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
   Window,
   WindowHeader,
@@ -8,79 +8,48 @@ import {
   Button,
   TextInput,
   Frame,
-  ScrollView,
   Toolbar,
+  Hourglass,
 } from "react95";
 import { ThemeProvider } from "styled-components";
 import original from "react95/dist/themes/original";
+import { ALL_PAGES, DEFAULT_URLS } from "./sets";
 
-const ALL_PAGES = [
-  {
-    setId: 1,
-    fileUrl: "/pages/set1-page1.html",
-    displayUrl:
-      "https://medium.com/@108/just-like-hamburger-exactly-like-hamburger-5ba6f95c2b32",
-  },
-  {
-    setId: 1,
-    fileUrl: "/pages/set1-page2.html",
-    displayUrl: "https://alexwlchan.net/2025/social-media-scrapbook/",
-  },
-  {
-    setId: 1,
-    fileUrl: "/pages/set1-page3.html",
-    displayUrl: "https://plorg.neocities.org/",
-  },
-  {
-    setId: 2,
-    fileUrl: "/pages/set2-page1.html",
-    displayUrl: "https://theforest.link/",
-  },
-  {
-    setId: 2,
-    fileUrl: "/pages/set2-page2.html",
-    displayUrl: "https://itch.io/jam/death-of-an-mmo-game-jam",
-  },
-  {
-    setId: 3,
-    fileUrl: "/pages/set2-page3.html",
-    displayUrl: "https://video.rhizome.org/w/qTLXF3qeiwWeUMLUhNH5Fy",
-  },
-  {
-    setId: 3,
-    fileUrl: "/pages/set3-page1.html",
-    displayUrl: "https://news.dyne.org/the-future-was-federated/",
-  },
-  {
-    setId: 3,
-    fileUrl: "/pages/set3-page2.html",
-    displayUrl: "https://alexwlchan.net/2025/meeting-my-younger-self/",
-  },
-  {
-    setId: 3,
-    fileUrl: "/pages/set3-page3.html",
-    displayUrl:
-      "https://www.pewresearch.org/wp-content/uploads/sites/20/2024/05/pl_2024.05.17_link-rot_report.pdf",
-  },
-];
+// const INITIAL_URL = "https://cel.cs.brown.edu/csci-1377-s26/";
 
-// url for page 1 of each of the 3 sets
-const DEFAULT_URLS: Record<number, { fileUrl: string; displayUrl: string }> = {
-  1: ALL_PAGES.find((p) => p.setId === 1)!,
-  2: ALL_PAGES.find((p) => p.setId === 2)!,
-  3: ALL_PAGES.find((p) => p.setId === 3)!,
-};
+// const ALLOWED_DOMAINS = ["cel.cs.brown.edu"];
+
+// function isAllowed(url: string): boolean {
+//   try {
+//     const { hostname } = new URL(url);
+//     return ALLOWED_DOMAINS.some(
+//       (d) => hostname === d || hostname.endsWith("." + d),
+//     );
+//   } catch {
+//     return false;
+//   }
+// }
+
+// function toProxyUrl(url: string): string {
+//   return `/api/proxy?url=${encodeURIComponent(url)}`;
+// }
 
 interface ExploreFrameProps {
   onUrlChange?: (url: string) => void;
   timerRunning: boolean;
   activeSetId: number;
+  onSelection?: (text: string, rect: DOMRect) => void;
+  onImageSelection?: (src: string, rect: DOMRect) => void;
+  onClearSelection?: () => void;
 }
 
 export default function ExploreFrame({
   onUrlChange,
   timerRunning,
   activeSetId,
+  onSelection,
+  onImageSelection,
+  onClearSelection,
 }: ExploreFrameProps) {
   const initialPage = DEFAULT_URLS[activeSetId] ?? DEFAULT_URLS[1];
   const [inputUrl, setInputUrl] = useState(initialPage.displayUrl);
@@ -89,15 +58,43 @@ export default function ExploreFrame({
     ALL_PAGES.findIndex((p) => p.setId === activeSetId),
   );
 
+  // const [blockedUrl, setBlockedUrl] = useState<string | null>(null);
   const [canGoBack, setCanGoBack] = useState(false);
   const [canGoForward, setCanGoForward] = useState(false);
-  // tracks iframe content height so the react95 scrollview works
-  const [iframeHeight, setIframeHeight] = useState<number>(800);
+
   const iframeRef = useRef<HTMLIFrameElement>(null);
   const navHistory = useRef<string[]>([initialPage.fileUrl]);
   const historyIdx = useRef(0);
   const lastNavUrl = useRef(initialPage.fileUrl);
 
+  const onSelectionRef = useRef(onSelection);
+  const onImageSelectionRef = useRef(onImageSelection);
+  const onClearSelectionRef = useRef(onClearSelection);
+
+  useEffect(() => {
+    onSelectionRef.current = onSelection;
+  }, [onSelection]);
+  useEffect(() => {
+    onImageSelectionRef.current = onImageSelection;
+  }, [onImageSelection]);
+  useEffect(() => {
+    onClearSelectionRef.current = onClearSelection;
+  }, [onClearSelection]);
+
+  useEffect(() => {
+    const newPage = DEFAULT_URLS[activeSetId] ?? DEFAULT_URLS[1];
+    setInputUrl(newPage.displayUrl);
+    setIframeUrl(newPage.fileUrl);
+    setPageIndex(ALL_PAGES.findIndex((p) => p.setId === activeSetId));
+    navHistory.current = [newPage.fileUrl];
+    historyIdx.current = 0;
+    lastNavUrl.current = newPage.fileUrl;
+    setCanGoBack(false);
+    setCanGoForward(false);
+    onUrlChange?.(newPage.displayUrl);
+  }, [activeSetId]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  // for displaying page index in the status bar
   const pagesInCurrentSet = ALL_PAGES.filter(
     (p) => p.setId === ALL_PAGES[pageIndex].setId,
   );
@@ -105,6 +102,7 @@ export default function ExploreFrame({
     (p) => p.fileUrl === ALL_PAGES[pageIndex].fileUrl,
   );
 
+  // when navigating between pages in set, separate from the browser ones
   function goPrevPage() {
     const newIndex = pageIndex - 1;
     if (newIndex < 0) return;
@@ -147,6 +145,22 @@ export default function ExploreFrame({
       onUrlChange?.(match.displayUrl);
     }
   }
+  // function navigateTo(url: string) {
+  //   let normalized = url.trim();
+  //   if (normalized && !/^[a-zA-Z][a-zA-Z0-9+\-.]*:\/\//.test(normalized)) {
+  //     normalized = "https://" + normalized;
+  //   }
+  //   setInputValue(normalized);
+  //   if (!isAllowed(normalized)) {
+  //     setBlockedUrl(normalized);
+  //     return;
+  //   }
+  //   setBlockedUrl(null);
+  //   pushHistory(normalized);
+  //   lastNavUrl.current = normalized;
+  //   onUrlChange?.(normalized);
+  //   iframeReplace(normalized);
+  // }
 
   function handleSearch() {
     navigateTo(inputUrl);
@@ -157,6 +171,7 @@ export default function ExploreFrame({
     historyIdx.current--;
     const url = navHistory.current[historyIdx.current];
     setInputUrl(url);
+    // setBlockedUrl(null);
     updateButtons();
     lastNavUrl.current = url;
     onUrlChange?.(url);
@@ -172,6 +187,7 @@ export default function ExploreFrame({
     historyIdx.current++;
     const url = navHistory.current[historyIdx.current];
     setInputUrl(url);
+    // setBlockedUrl(null);
     updateButtons();
     lastNavUrl.current = url;
     onUrlChange?.(url);
@@ -188,34 +204,64 @@ export default function ExploreFrame({
     const doc = iframe.contentDocument;
     if (!doc) return;
 
-    function measureHeight() {
-      setIframeHeight(
-        doc!.documentElement.scrollHeight || doc!.body.scrollHeight,
+    function iframeOffset() {
+      const r = iframe!.getBoundingClientRect();
+      return { x: r.left, y: r.top };
+    }
+
+    doc.addEventListener("mouseup", () => {
+      const sel = doc.getSelection();
+      if (!sel || sel.isCollapsed) return;
+      const text = sel.toString().trim();
+      if (text.length < 2) return;
+      const r = sel.getRangeAt(0).getBoundingClientRect();
+      const { x, y } = iframeOffset();
+      onSelectionRef.current?.(
+        text,
+        new DOMRect(r.left + x, r.top + y, r.width, r.height),
       );
-    }
+    });
 
-    // wait for all images inside the iframe to load before measuring
-    const images = Array.from(doc.querySelectorAll("img"));
-    const pending = images.filter((img) => !img.complete);
+    doc.addEventListener("mousedown", (e) => {
+      if ((e.target as HTMLElement).tagName !== "IMG") {
+        onClearSelectionRef.current?.();
+      }
+    });
 
-    if (pending.length > 0) {
-      let loaded = 0;
-      pending.forEach((img) => {
-        img.addEventListener("load", () => {
-          loaded++;
-          if (loaded === pending.length) measureHeight();
-        });
-        img.addEventListener("error", () => {
-          loaded++;
-          if (loaded === pending.length) measureHeight();
-        });
-      });
-    } else {
-      measureHeight();
-    }
-
-    new ResizeObserver(measureHeight).observe(doc.body);
+    doc.addEventListener("click", (e) => {
+      const target = e.target as HTMLElement;
+      if (target.tagName !== "IMG") return;
+      e.preventDefault();
+      const r = target.getBoundingClientRect();
+      const { x, y } = iframeOffset();
+      onImageSelectionRef.current?.(
+        (target as HTMLImageElement).src,
+        new DOMRect(r.left + x, r.top + y, r.width, r.height),
+      );
+    });
   }
+
+  // function handleLoad() {
+  //   const iframe = iframeRef.current;
+  //   if (!iframe) return;
+  //   let href: string | undefined;
+  //   try {
+  //     href = iframe.contentWindow?.location.href;
+  //   } catch {
+  //     return;
+  //   }
+  //   if (!href || href === "about:blank") return;
+  //   try {
+  //     const proxyParams = new URL(href, window.location.origin);
+  //     const realUrl = proxyParams.searchParams.get("url");
+  //     if (realUrl && realUrl !== lastNavUrl.current) {
+  //       lastNavUrl.current = realUrl;
+  //       pushHistory(realUrl);
+  //       setInputUrl(realUrl);
+  //       onUrlChange?.(realUrl);
+  //     }
+  //   } catch {}
+  // }
 
   return (
     <ThemeProvider theme={original}>
@@ -239,7 +285,11 @@ export default function ExploreFrame({
             padding: "4px",
           }}
         >
-          <span style={{ paddingTop: "2px" }}>Set {activeSetId}</span>
+          <div className="window-name">
+            <Hourglass size={20} />
+            <span style={{ paddingTop: "3px" }}>Set {activeSetId}</span>
+          </div>
+
           <div className="browser-buttons">
             <Button>
               <svg
@@ -382,22 +432,18 @@ export default function ExploreFrame({
             flexDirection: "column",
           }}
         >
-          <ScrollView style={{ width: "100%", height: "100%" }}>
-            <iframe
-              ref={iframeRef}
-              src={iframeUrl}
-              onLoad={handleLoad}
-              scrolling="no"
-              style={{
-                width: "100%",
-                height: iframeHeight,
-                border: "none",
-                display: "block",
-              }}
-            />
-          </ScrollView>
+          <iframe
+            ref={iframeRef}
+            src={iframeUrl}
+            onLoad={handleLoad}
+            style={{
+              flex: 1,
+              width: "100%",
+              border: "none",
+              display: "block",
+            }}
+          />
         </WindowContent>
-
         <div
           style={{
             display: "flex",
@@ -407,19 +453,16 @@ export default function ExploreFrame({
           }}
         >
           <Frame
-            variant="status"
             style={{ flex: 1, height: 40, padding: "2px 8px", fontSize: 20 }}
           >
             Page {indexInSet + 1} / {pagesInCurrentSet.length}
           </Frame>
           <Frame
-            variant="status"
             style={{ flex: 1, height: 40, padding: "2px 8px", fontSize: 20 }}
           >
             {" "}
           </Frame>
           <Frame
-            variant="status"
             style={{ flex: 1, height: 40, padding: "2px 8px", fontSize: 20 }}
           >
             {" "}
@@ -449,7 +492,7 @@ export default function ExploreFrame({
                   d="M10 18L10 0L7.5 -1.07761e-07V2.57143L5 2.57143V5.14286L2.5 5.14286L2.5 7.71429L0 7.71429V10.2857L2.5 10.2857V12.8571L5 12.8571V15.4286L7.5 15.4286V18L10 18Z"
                   fill={pageIndex === 0 ? "#808080" : "black"}
                 />
-              </svg>{" "}
+              </svg>
               Prev
             </Button>
             <Button
@@ -463,7 +506,7 @@ export default function ExploreFrame({
                 padding: "6px 16px",
               }}
             >
-              Next{" "}
+              Next
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 width="10"
