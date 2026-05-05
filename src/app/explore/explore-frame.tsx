@@ -101,7 +101,7 @@ export default function ExploreFrame({
   useEffect(() => {
     try {
       if (iframeRef.current?.contentWindow) {
-\        (iframeRef.current.contentWindow as any).decayTimeLeft = timeLeft;
+        (iframeRef.current.contentWindow as any).decayTimeLeft = timeLeft;
         (iframeRef.current.contentWindow as any).decayTimeBudget = budgetLeft;
       }
     } catch {}
