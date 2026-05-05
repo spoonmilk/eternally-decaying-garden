@@ -47,6 +47,8 @@ export default function Explore() {
           onSelection={onSelection}
           onImageSelection={onImageSelection}
           onClearSelection={onClearSelection}
+          timeLeft={timeLeft}
+          budgetLeft={budgetLeft}
         />
       </div>
       <ExploreSidebar

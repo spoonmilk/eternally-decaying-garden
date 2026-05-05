@@ -5,7 +5,7 @@ import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { type SetId } from "./sets";
 
-const TIME_BUDGET = 30;
+const TIME_BUDGET = 180;
 const MAX_WORD_BUDGET = 500;
 const IMAGE_WORD_COST = 20;
 

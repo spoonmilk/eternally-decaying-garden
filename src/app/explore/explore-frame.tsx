@@ -13,7 +13,7 @@ import {
 } from "react95";
 import { ThemeProvider } from "styled-components";
 import original from "react95/dist/themes/original";
-import { ALL_PAGES, DEFAULT_URLS } from "./sets";
+import { ALL_PAGES, DEFAULT_URLS, PAGE_SETS } from "./sets";
 
 // const INITIAL_URL = "https://cel.cs.brown.edu/csci-1377-s26/";
 
@@ -41,6 +41,8 @@ interface ExploreFrameProps {
   onSelection?: (text: string, rect: DOMRect) => void;
   onImageSelection?: (src: string, rect: DOMRect) => void;
   onClearSelection?: () => void;
+  timeLeft: number;
+  budgetLeft: number;
 }
 
 export default function ExploreFrame({
@@ -50,6 +52,8 @@ export default function ExploreFrame({
   onSelection,
   onImageSelection,
   onClearSelection,
+  timeLeft,
+  budgetLeft,
 }: ExploreFrameProps) {
   const initialPage = DEFAULT_URLS[activeSetId] ?? DEFAULT_URLS[1];
   const [inputUrl, setInputUrl] = useState(initialPage.displayUrl);
@@ -93,6 +97,15 @@ export default function ExploreFrame({
     setCanGoForward(false);
     onUrlChange?.(newPage.displayUrl);
   }, [activeSetId]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  useEffect(() => {
+    try {
+      if (iframeRef.current?.contentWindow) {
+\        (iframeRef.current.contentWindow as any).decayTimeLeft = timeLeft;
+        (iframeRef.current.contentWindow as any).decayTimeBudget = budgetLeft;
+      }
+    } catch {}
+  }, [timeLeft, budgetLeft]);
 
   // for displaying page index in the status bar
   const pagesInCurrentSet = ALL_PAGES.filter(
@@ -497,7 +510,7 @@ export default function ExploreFrame({
             </Button>
             <Button
               onClick={goNextPage}
-              disabled={pageIndex === ALL_PAGES.length - 1}
+              disabled={indexInSet === pagesInCurrentSet.length}
               style={{
                 height: 40,
                 fontSize: 20,
