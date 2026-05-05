@@ -2,6 +2,7 @@
   "use strict";
 
   const CMYK = ["cyan", "magenta", "yellow", "black"];
+  const BLACK_SQUARE = "█";
 
   let currentPhase = -1;
   let decayInterval = null;

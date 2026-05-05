@@ -510,7 +510,7 @@ export default function ExploreFrame({
             </Button>
             <Button
               onClick={goNextPage}
-              disabled={indexInSet === pagesInCurrentSet.length}
+              disabled={indexInSet === pagesInCurrentSet.length - 1}
               style={{
                 height: 40,
                 fontSize: 20,
@@ -531,7 +531,7 @@ export default function ExploreFrame({
                   fillRule="evenodd"
                   clipRule="evenodd"
                   d="M0 18L0 0L2.5 -1.07761e-07V2.57143L5 2.57143V5.14286L7.5 5.14286L7.5 7.71429L10 7.71429V10.2857L7.5 10.2857V12.8571L5 12.8571V15.4286L2.5 15.4286V18L0 18Z"
-                  fill="black"
+                  fill={pageIndex === 0 ? "#808080" : "black"}
                 />
               </svg>
             </Button>
