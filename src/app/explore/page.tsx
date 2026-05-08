@@ -6,6 +6,8 @@ import ExploreSidebar from "./explore-sidebar";
 import SelectionPopup from "./selection-popup";
 import { usePreservation } from "./use-preservation";
 import { type SetId, ALL_PAGES } from "./sets";
+import OutroContent from "./outro";
+import IntroContent from "./intro";
 
 export default function Explore() {
   const currentUrlRef = useRef<string>(ALL_PAGES[0].displayUrl);
@@ -23,7 +25,10 @@ export default function Explore() {
     onImageSelection,
     onClearSelection,
     save,
-    dismiss,
+    phase,
+    beginSet,
+    onDecayComplete,
+    continueFromOutro,
   } = usePreservation(currentUrlRef);
 
   // accordion open/close state
@@ -38,18 +43,29 @@ export default function Explore() {
     <main className="explore">
       <div className="left">
         <ExploreHeader timeLeft={timeLeft} budgetLeft={budgetLeft} />
-        <ExploreFrame
-          onUrlChange={(url) => {
-            currentUrlRef.current = url;
-          }}
-          timerRunning={timeLeft > 0}
-          activeSetId={currentSetId}
-          onSelection={onSelection}
-          onImageSelection={onImageSelection}
-          onClearSelection={onClearSelection}
-          timeLeft={timeLeft}
-          budgetLeft={budgetLeft}
-        />
+        {phase === "intro" && (
+          <IntroContent setId={currentSetId} onBegin={beginSet} />
+        )}
+        {phase === "explore" && (
+          <ExploreFrame
+            onUrlChange={(url) => {
+              currentUrlRef.current = url;
+            }}
+            activeSetId={currentSetId}
+            onSelection={onSelection}
+            onImageSelection={onImageSelection}
+            onClearSelection={onClearSelection}
+            timeLeft={timeLeft}
+            budgetLeft={budgetLeft}
+            onDecayComplete={onDecayComplete}
+          />
+        )}
+        {phase === "outro" && (
+          <OutroContent
+            completedSetId={currentSetId}
+            onContinue={continueFromOutro}
+          />
+        )}
       </div>
       <ExploreSidebar
         preserved={preserved}
@@ -70,7 +86,6 @@ export default function Explore() {
           timeLeft={timeLeft}
           selectionWordCount={selectionWordCount}
           onSave={save}
-          onDismiss={dismiss}
         />
       )}
     </main>

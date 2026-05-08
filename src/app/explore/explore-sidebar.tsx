@@ -19,7 +19,6 @@ export default function ExploreSidebar({
       <div className="archive-header">Archive</div>
       <div className="archive-content archive-accordions">
         {SET_IDS.map((setId) => {
-          // CHANGED: derive setId from item.url since Preserved no longer has a setId field
           const itemsInSet = preserved.filter(
             (item) => getSetForUrl(item.url) === setId,
           );
@@ -34,10 +33,9 @@ export default function ExploreSidebar({
                 onClick={() => onToggleSet(setId)}
               >
                 <div className="summary-left">
-                  <span className="set-name">{`Set ${setId}`}</span>
+                  <span className="set-name">{`Act ${setId}`}</span>
                   <span className="set-count">{`(${itemsInSet.length})`}</span>
                 </div>
-                {/* UNCHANGED — your chevron SVG */}
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   width="24"
@@ -59,7 +57,6 @@ export default function ExploreSidebar({
                   {itemsInSet.length === 0 ? (
                     <li>Nothing has been saved yet.</li>
                   ) : (
-                    // UNCHANGED — your item rendering
                     itemsInSet.map((item) => {
                       const displayUrl = item.url.replace("https://", "");
                       let previewText: string | null = null;

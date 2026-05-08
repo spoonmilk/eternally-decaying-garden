@@ -36,24 +36,30 @@ import { ALL_PAGES, DEFAULT_URLS, PAGE_SETS } from "./sets";
 
 interface ExploreFrameProps {
   onUrlChange?: (url: string) => void;
-  timerRunning: boolean;
   activeSetId: number;
   onSelection?: (text: string, rect: DOMRect) => void;
   onImageSelection?: (src: string, rect: DOMRect) => void;
   onClearSelection?: () => void;
   timeLeft: number;
   budgetLeft: number;
+  onDecayComplete: () => void;
 }
+
+const SET_NAMES: Record<number, string> = {
+  1: "Act 1: Timescales of the Internet",
+  2: "Act 2: Link rot, Consumption, Mechanisms of Loss",
+  3: "Act 3: Bias & Justice in Knowledge Work",
+};
 
 export default function ExploreFrame({
   onUrlChange,
-  timerRunning,
   activeSetId,
   onSelection,
   onImageSelection,
   onClearSelection,
   timeLeft,
   budgetLeft,
+  onDecayComplete,
 }: ExploreFrameProps) {
   const initialPage = DEFAULT_URLS[activeSetId] ?? DEFAULT_URLS[1];
   const [inputUrl, setInputUrl] = useState(initialPage.displayUrl);
@@ -86,6 +92,11 @@ export default function ExploreFrame({
   }, [onClearSelection]);
 
   useEffect(() => {
+    // reset decay state in the iframe when set advances
+    try {
+      (iframeRef.current?.contentWindow as any)?.decayReset?.();
+    } catch {}
+
     const newPage = DEFAULT_URLS[activeSetId] ?? DEFAULT_URLS[1];
     setInputUrl(newPage.displayUrl);
     setIframeUrl(newPage.fileUrl);
@@ -300,7 +311,7 @@ export default function ExploreFrame({
         >
           <div className="window-name">
             <Hourglass size={20} />
-            <span style={{ paddingTop: "3px" }}>Set {activeSetId}</span>
+            <span style={{ paddingTop: "3px" }}>{SET_NAMES[activeSetId]}</span>
           </div>
 
           <div className="browser-buttons">
@@ -445,17 +456,65 @@ export default function ExploreFrame({
             flexDirection: "column",
           }}
         >
-          <iframe
-            ref={iframeRef}
-            src={iframeUrl}
-            onLoad={handleLoad}
-            style={{
-              flex: 1,
-              width: "100%",
-              border: "none",
-              display: "block",
-            }}
-          />
+          <div style={{ flex: 1, minHeight: 0, overflow: "hidden" }}>
+            {timeLeft === 0 ? (
+              <div
+                style={{
+                  width: "100%",
+                  height: "100%",
+                  backgroundColor: "black",
+                  display: "flex",
+                  flexDirection: "column",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  gap: "24px",
+                }}
+              >
+                <p
+                  style={{
+                    color: "white",
+                    fontSize: 48,
+                    margin: 0,
+                    fontFamily: "MS Sans Serif",
+                  }}
+                >
+                  404 Not Found
+                </p>
+                <p
+                  style={{
+                    color: "white",
+                    fontSize: 20,
+                    margin: 0,
+                    fontFamily: "MS Sans Serif",
+                  }}
+                >
+                  This page has decayed. Please proceed to reflect.
+                </p>
+                <Button
+                  onClick={onDecayComplete}
+                  style={{
+                    fontSize: 20,
+                    padding: "8px 32px",
+                    marginTop: "8px",
+                  }}
+                >
+                  Reflect →
+                </Button>
+              </div>
+            ) : (
+              <iframe
+                ref={iframeRef}
+                src={iframeUrl}
+                onLoad={handleLoad}
+                style={{
+                  width: "100%",
+                  height: "100%",
+                  border: "none",
+                  display: "block",
+                }}
+              />
+            )}
+          </div>
         </WindowContent>
         <div
           style={{
@@ -531,7 +590,11 @@ export default function ExploreFrame({
                   fillRule="evenodd"
                   clipRule="evenodd"
                   d="M0 18L0 0L2.5 -1.07761e-07V2.57143L5 2.57143V5.14286L7.5 5.14286L7.5 7.71429L10 7.71429V10.2857L7.5 10.2857V12.8571L5 12.8571V15.4286L2.5 15.4286V18L0 18Z"
-                  fill={pageIndex === 0 ? "#808080" : "black"}
+                  fill={
+                    indexInSet === pagesInCurrentSet.length - 1
+                      ? "#808080"
+                      : "black"
+                  }
                 />
               </svg>
             </Button>

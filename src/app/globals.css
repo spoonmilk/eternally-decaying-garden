@@ -1,5 +1,9 @@
 @import "tailwindcss";
 
+* {
+  box-sizing: border-box;
+}
+
 :root {
   --foreground: #ffffff;
   --background: #f2f2f2;
@@ -20,17 +24,6 @@
   }
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-* {
-  box-sizing: border-box;
-}
-
 html,
 body {
   height: 100%;
@@ -38,10 +31,11 @@ body {
 }
 
 body {
-  background: var(--foreground);
+  background: var(--background);
   color: var(--text-primary);
   font-family: "inter-18pt", Arial, Helvetica, sans-serif;
   font-weight: 400;
+  font-size: 16px;
   line-height: 1.5;
   width: 100%;
   height: 100%;
@@ -226,6 +220,7 @@ span.name,
 
 .highlight-button:hover {
   background-color: var(--stroke);
+  transition: 150ms;
 }
 
 .highlight-button svg {
@@ -289,16 +284,99 @@ span.name,
   background-color: white;
 }
 
-@font-face {
-  font-family: "MS Sans Serif";
-  src: url("/fonts/ms-sans-serif.ttf") format("truetype");
-  font-weight: normal;
+.inter-content {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-flow: column nowrap;
+  align-items: center;
+  gap: 36px;
+  background-color: var(--background);
+  color: var(--text-primary);
+  overflow-y: auto;
+  padding: 64px 24px;
+}
+
+.inter-content h1 {
+  width: 100%;
+  max-width: 640px;
+  text-align: left;
+  font-size: 56px;
+  line-height: 1.3;
+}
+
+.redac-reg {
+  font-family: redaction, sans-serif;
   font-style: normal;
+}
+
+.redac-20 {
+  font-family: redaction-20, sans-serif;
+  font-style: italic;
+}
+
+.redac-35 {
+  font-family: redaction-35, sans-serif;
+  font-style: normal;
+}
+
+.redac-50 {
+  font-family: redaction-50, sans-serif;
+  font-style: italic;
+}
+
+.inter-body {
+  width: 100%;
+  max-width: 640px;
+  display: flex;
+  flex-flow: column nowrap;
+  gap: 24px;
+}
+
+.intro-body {
+  width: 100%;
+  max-width: 640px;
+  display: flex;
+  flex-flow: column nowrap;
+  gap: 64px;
+}
+
+.intro-body p:nth-child(2n) {
+  text-align: right;
+}
+
+.inter-button {
+  background: var(--button);
+  border: 1px solid var(--stroke);
+  border-radius: 8px;
+  padding: 10px 16px;
+  display: flex;
+  flex-flow: row nowrap;
+  align-items: center;
+  font-weight: 400;
+}
+
+.inter-button:hover {
+  background-color: var(--stroke);
+  transition: 150ms;
 }
 
 @font-face {
   font-family: "MS Sans Serif";
-  src: url("/fonts/ms-sans-serif-bold.ttf") format("truetype");
+  src:
+    url("/fonts/ms-sans-serif.woff") format("woff"),
+    url("/fonts/ms-sans-serif.ttf") format("truetype");
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "MS Sans Serif";
+  src:
+    url("/fonts/ms-sans-serif-bold.woff") format("woff"),
+    url("/fonts/ms-sans-serif-bold.ttf") format("truetype");
   font-weight: bold;
   font-style: normal;
+  font-display: swap;
 }

@@ -5,7 +5,7 @@ import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { type SetId } from "./sets";
 
-const TIME_BUDGET = 180;
+const TIME_BUDGET = 30;
 const MAX_WORD_BUDGET = 500;
 const IMAGE_WORD_COST = 20;
 
@@ -70,50 +70,34 @@ export function usePreservation(currentUrl?: React.RefObject<string>) {
   );
   const idCounter = useRef(0);
   // const addPreserved = usePreservationStore((s) => s.addPreserved);
-
   const [currentSetIndex, setCurrentSetIndex] = useState(0);
   const currentSetId = (currentSetIndex + 1) as SetId;
-  // ref so the interval closure always reads the latest value without re-subscribing
   const currentSetIndexRef = useRef(currentSetIndex);
   currentSetIndexRef.current = currentSetIndex;
+  const [phase, setPhase] = useState<"intro" | "explore" | "outro">("intro");
 
-  // decrement timer
+  // decrement timer, but only during explore phase
   useEffect(() => {
+    if (phase !== "explore") return;
     const interval = setInterval(() => {
       setTimeLeft((t) => Math.max(0, t - 1));
     }, 1000);
     return () => clearInterval(interval);
-  }, [currentSetIndex]);
+  }, [currentSetIndex, phase]);
 
-  // when timer hits zero advance to next set or summary
   useEffect(() => {
-    if (timeLeft !== 0) return;
-    if (currentSetIndexRef.current < 2) {
-      setCurrentSetIndex((i) => i + 1);
-    } else {
-      sessionStorage.setItem("preserved", JSON.stringify(preserved));
-      router.push("/summary");
-    }
-  }, [timeLeft, preserved, router]);
+    if (wordBudgetLeft !== 0) return;
+    if (preserved.length === 0) return;
+    if (phase !== "explore") return;
+    setPhase("outro");
+  }, [wordBudgetLeft, preserved, phase]);
 
   // reset timer display when we move to next set
   useEffect(() => {
     setTimeLeft(TIME_BUDGET);
     setWordBudget(MAX_WORD_BUDGET);
+    setPhase("intro");
   }, [currentSetIndex]);
-
-  // autonavigate to next set/summary page when budget runs out
-  useEffect(() => {
-    // only act if budget just hit zero and something has been saved
-    if (wordBudgetLeft !== 0) return;
-    if (preserved.length === 0) return;
-    if (currentSetIndexRef.current < 2) {
-      setCurrentSetIndex((i) => i + 1);
-    } else {
-      sessionStorage.setItem("preserved", JSON.stringify(preserved));
-      router.push("/summary");
-    }
-  }, [wordBudgetLeft, currentSetIndex, preserved, router]);
 
   function onSelection(text: string, rect: DOMRect) {
     if (!text || text.length < 1) return;
@@ -121,7 +105,7 @@ export function usePreservation(currentUrl?: React.RefObject<string>) {
     setSelection(text);
     const wc = countWords(text);
     setSelectionWordCount(wc);
-    setPopupPos({ x: rect.left + rect.width / 2, y: rect.top });
+    setPopupPos({ x: rect.left + rect.width, y: rect.top });
   }
 
   function onImageSelection(src: string, rect: DOMRect) {
@@ -129,8 +113,15 @@ export function usePreservation(currentUrl?: React.RefObject<string>) {
     setSelection(src);
     // images have fixed cost
     setSelectionWordCount(IMAGE_WORD_COST);
-    setPopupPos({ x: rect.left + rect.width / 2, y: rect.top });
+    setPopupPos({ x: rect.left + rect.width, y: rect.top });
   }
+
+  useEffect(() => {
+    if (timeLeft !== 0) return;
+    setSelection(null);
+    setPopupPos(null);
+    setSelectionWordCount(0);
+  }, [timeLeft]);
 
   function onClearSelection() {
     setSelection(null);
@@ -200,6 +191,22 @@ export function usePreservation(currentUrl?: React.RefObject<string>) {
     window.getSelection()?.removeAllRanges();
   }
 
+  function beginSet() {
+    setPhase("explore");
+  }
+
+  function onDecayComplete() {
+    setPhase("outro");
+  }
+
+  function continueFromOutro() {
+    if (currentSetIndexRef.current < 2) {
+      setCurrentSetIndex((i) => i + 1); // phase resets to "intro" via the effect above
+    } else {
+      sessionStorage.setItem("preserved", JSON.stringify(preserved));
+      router.push("/summary");
+    }
+  }
   return {
     timeLeft,
     budgetLeft: wordBudgetLeft,
@@ -213,6 +220,9 @@ export function usePreservation(currentUrl?: React.RefObject<string>) {
     onImageSelection,
     onClearSelection,
     save,
-    dismiss,
+    phase,
+    beginSet,
+    onDecayComplete,
+    continueFromOutro,
   };
 }
