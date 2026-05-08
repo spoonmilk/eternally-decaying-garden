@@ -21,6 +21,7 @@ interface ExploreFrameProps {
   onSelection?: (text: string, rect: DOMRect) => void;
   onImageSelection?: (src: string, rect: DOMRect) => void;
   onClearSelection?: () => void;
+  timeBudget: number;
   timeLeft: number;
   budgetLeft: number;
   onDecayComplete: () => void;
@@ -38,6 +39,7 @@ export default function ExploreFrame({
   onSelection,
   onImageSelection,
   onClearSelection,
+  timeBudget,
   timeLeft,
   budgetLeft,
   onDecayComplete,
@@ -94,10 +96,10 @@ export default function ExploreFrame({
     try {
       if (iframeRef.current?.contentWindow) {
         (iframeRef.current.contentWindow as any).decayTimeLeft = timeLeft;
-        (iframeRef.current.contentWindow as any).decayTimeBudget = budgetLeft;
+        (iframeRef.current.contentWindow as any).decayTotalTime = timeBudget;
       }
     } catch {}
-  }, [timeLeft, budgetLeft]);
+  }, [timeLeft, timeBudget]);
 
   // for displaying page index in the status bar
   const pagesInCurrentSet = ALL_PAGES.filter(
@@ -190,6 +192,11 @@ export default function ExploreFrame({
     if (!iframe) return;
     const doc = iframe.contentDocument;
     if (!doc) return;
+
+    try {
+      (iframe.contentWindow as any).decayTimeLeft = timeLeft;
+      (iframe.contentWindow as any).decayTotalTime = timeBudget;
+    } catch {}
 
     function iframeOffset() {
       const r = iframe!.getBoundingClientRect();

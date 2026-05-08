@@ -13,7 +13,6 @@ export default function SelectionPopup({
   selectionKind,
   pos,
   budgetLeft,
-  timeLeft,
   selectionWordCount,
   onSave,
 }: SelectionPopupProps) {
@@ -23,11 +22,18 @@ export default function SelectionPopup({
       style={{
         left: pos.x,
         top: pos.y,
-        transform: "translate(-100%, calc(-100% - 8px))",
+        transform: "translate(0%, calc(-100% - 8px))",
       }}
     >
       {budgetLeft === 0 ? (
-        <span style={{ color: "red" }}>No budget left</span>
+        <span style={{ color: "red", fontWeight: "500" }}>No budget left</span>
+      ) : selectionWordCount > budgetLeft ? (
+        <div className="button-text" style={{ color: "red" }}>
+          <span>Over budget</span>
+          <span style={{ fontSize: "16px", fontWeight: "300" }}>
+            ({selectionWordCount} words)
+          </span>
+        </div>
       ) : (
         <button type="button" onClick={onSave}>
           <svg
@@ -55,7 +61,6 @@ export default function SelectionPopup({
                   fontWeight: "300",
                 }}
               >
-                {" "}
                 ({selectionWordCount} words)
               </span>
             )}

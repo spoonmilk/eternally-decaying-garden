@@ -5,7 +5,7 @@ import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { type SetId } from "./sets";
 
-const TIME_BUDGET = 30;
+export const TIME_BUDGET = 90;
 const MAX_WORD_BUDGET = 500;
 const IMAGE_WORD_COST = 20;
 
@@ -105,7 +105,7 @@ export function usePreservation(currentUrl?: React.RefObject<string>) {
     setSelection(text);
     const wc = countWords(text);
     setSelectionWordCount(wc);
-    setPopupPos({ x: rect.left + rect.width, y: rect.top });
+    setPopupPos({ x: rect.left, y: rect.top });
   }
 
   function onImageSelection(src: string, rect: DOMRect) {
@@ -113,7 +113,7 @@ export function usePreservation(currentUrl?: React.RefObject<string>) {
     setSelection(src);
     // images have fixed cost
     setSelectionWordCount(IMAGE_WORD_COST);
-    setPopupPos({ x: rect.left + rect.width, y: rect.top });
+    setPopupPos({ x: rect.left, y: rect.top });
   }
 
   useEffect(() => {
@@ -137,11 +137,6 @@ export function usePreservation(currentUrl?: React.RefObject<string>) {
 
     if (selectionKind === "image") {
       const cost = IMAGE_WORD_COST;
-      if (cost > wordBudgetLeft) {
-        // Cannot save
-        // TODO: Break selection here? Make red after selection budget exceeded?
-        return;
-      }
       const entry: Preserved = {
         id,
         url,

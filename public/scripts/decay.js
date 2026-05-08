@@ -1,5 +1,5 @@
 (function () {
-  ("use strict");
+  "use strict";
 
   const CMYK = ["cyan", "magenta", "yellow", "black"];
   const originalTexts = new Map();
@@ -10,7 +10,11 @@
   let cyclePercent = 10;
   let blackoutStarted = false;
   let blackoutSpans = [];
-  let timeBudget = null;
+  let initialized = false;
+
+  function getTotalTime() {
+    return window.decayTotalTime ?? 90;
+  }
 
   function getSpans() {
     return Array.from(document.querySelectorAll(".decay-token"));
@@ -21,9 +25,10 @@
   }
 
   function getPhase(tLeft) {
-    const elapsed = timeBudget - tLeft;
-    const interval = timeBudget / 6;
-    if (elapsed < interval * 1) return 0;
+    const total = getTotalTime();
+    const elapsed = total - tLeft;
+    const interval = total / 6;
+    if (elapsed < interval) return 0;
     if (elapsed < interval * 2) return 1;
     if (elapsed < interval * 3) return 2;
     if (elapsed < interval * 4) return 3;
@@ -45,19 +50,16 @@
     span.style.color = "";
   }
 
-  // replace text with black squares
   function blackenSpan(span) {
     if (!originalTexts.has(span)) {
       originalTexts.set(span, span.textContent);
     }
     span.style.backgroundColor = "black";
     span.style.color = "black";
-    // replace text so copying yields black squares
     const original = span.dataset.original || span.textContent || "";
     span.textContent = BLACK_SQUARE.repeat(Math.max(1, original.length));
   }
 
-  // blacken an image by covering it with a black overlay div
   function blackenImage(img) {
     if (img.dataset.blackened) return;
     img.dataset.blackened = "true";
@@ -111,61 +113,88 @@
     cyclePercent += 1;
   }
 
-  function startSlowBlackout() {
+  function jumpToPhase(phase, tLeft) {
+    clearDecayInterval();
+
+    if (phase === 0) {
+      getSpans().forEach(resetSpan);
+      return;
+    }
+
+    if (phase === 1) {
+      runPhase1Cycle();
+      decayInterval = setInterval(runPhase1Cycle, 2000);
+      return;
+    }
+
+    if (phase === 2) {
+      // estimate how many 2s cycles have already fired and advance cyclePercent
+      const elapsed = msElapsedInPhase(tLeft, 2);
+      cyclePercent = 10 + Math.floor(elapsed / 2000);
+      runPhase2Cycle();
+      decayInterval = setInterval(runPhase2Cycle, 2000);
+      return;
+    }
+
+    if (phase === 3) {
+      const elapsed = msElapsedInPhase(tLeft, 3);
+      cyclePercent = Math.max(cyclePercent, 10 + Math.floor(elapsed / 2000));
+      runPhase3Cycle();
+      decayInterval = setInterval(runPhase3Cycle, 2000);
+      return;
+    }
+
+    if (phase === 4 || phase === 5) {
+      // both phases use the same blackout, calibrated from phase 4 start to tLeft=0
+      // jumpToSlowBlackout handles mid-blackout correctly regardless of which phase we're in
+      jumpToSlowBlackout(tLeft);
+      return;
+    }
+  }
+
+  function jumpToSlowBlackout(tLeft) {
     if (blackoutStarted) return;
     blackoutStarted = true;
     clearDecayInterval();
 
+    const total = getTotalTime();
+    const interval = total / 6;
+    // phase 4 starts when tLeft = interval * 2, ends when tLeft = 0
+    // so total animation duration = interval * 2 seconds
+    const phaseStartTLeft = interval * 2;
+    const totalMs = phaseStartTLeft * 1000;
+    const elapsedMs = (phaseStartTLeft - tLeft) * 1000;
+
     const spans = getSpans();
     blackoutSpans = [...spans].sort(() => Math.random() - 0.5);
     const N = blackoutSpans.length;
-    const totalMs = 28000;
 
     blackoutSpans.forEach((span, i) => {
       const t = i / N;
-      const delay = totalMs * Math.pow(t, 2);
-      setTimeout(() => blackenSpan(span), delay);
+      const scheduledAt = totalMs * Math.pow(t, 2);
+      const remaining = scheduledAt - elapsedMs;
+      if (remaining <= 0) {
+        blackenSpan(span);
+      } else {
+        setTimeout(() => blackenSpan(span), remaining);
+      }
     });
 
-    // blacken half of images spread over the phase
-    const halfImages = pickRandom(
-      getImages(),
-      Math.floor(getImages().length / 2),
-    );
+    const images = getImages();
+    const halfImages = pickRandom(images, Math.floor(images.length / 2));
     halfImages.forEach((img, idx) => {
-      setTimeout(
-        () => blackenImage(img),
-        (idx / Math.max(1, halfImages.length)) * totalMs,
-      );
+      const scheduledAt = (idx / Math.max(1, halfImages.length)) * totalMs;
+      const remaining = scheduledAt - elapsedMs;
+      if (remaining <= 0) blackenImage(img);
+      else setTimeout(() => blackenImage(img), remaining);
     });
   }
 
-  function startFastBlackout() {
+  function jumpToFullBlackout() {
     clearDecayInterval();
-
-    const remaining =
-      blackoutSpans.length > 0
-        ? blackoutSpans.filter((s) => s.style.backgroundColor !== "black")
-        : [...getSpans()].sort(() => Math.random() - 0.5);
-
+    getSpans().forEach(blackenSpan);
     getImages().forEach(blackenImage);
-
-    const N = remaining.length;
-    const totalMs = 20000; // faster phase
-
-    // schedule all remaining spans
-    remaining.forEach((span, i) => {
-      const delay = (i / N) * totalMs;
-      setTimeout(() => blackenSpan(span), delay);
-    });
-
-    // guarantee everything is blackened at the end
-    setTimeout(() => {
-      document
-        .querySelectorAll(".decay-token")
-        .forEach((span) => blackenSpan(span));
-      document.body.style.backgroundColor = "black";
-    }, totalMs + 500);
+    document.body.style.backgroundColor = "black";
   }
 
   function startPhase(phase) {
@@ -177,53 +206,68 @@
     if (phase === 1) {
       runPhase1Cycle();
       decayInterval = setInterval(runPhase1Cycle, 2000);
+      return;
     }
     if (phase === 2) {
       cyclePercent = 10;
       runPhase2Cycle();
       decayInterval = setInterval(runPhase2Cycle, 2000);
+      return;
     }
     if (phase === 3) {
       runPhase3Cycle();
       decayInterval = setInterval(runPhase3Cycle, 2000);
+      return;
     }
     if (phase === 4) {
-      startSlowBlackout();
+      jumpToSlowBlackout(window.decayTimeLeft ?? 0);
+      return;
     }
     if (phase === 5) {
-      startFastBlackout();
-    }
+      return;
+    } // phase 4 blackout already runs through to tLeft=0
   }
 
   setInterval(function () {
     const tLeft = window.decayTimeLeft;
-    if (tLeft === undefined) return;
-    if (timeBudget === null) {
-      timeBudget = tLeft;
+    if (tLeft === undefined || window.decayTotalTime === undefined) return;
+
+    const newPhase = getPhase(tLeft);
+
+    if (!initialized) {
+      initialized = true;
+      currentPhase = newPhase;
+      jumpToPhase(newPhase, tLeft); // jump to wherever we are in the timeline
       return;
     }
-    const newPhase = getPhase(tLeft);
+
     if (newPhase !== currentPhase) {
       currentPhase = newPhase;
       startPhase(newPhase);
     }
-  }, 500);
+  }, 100);
+
+  (function tryInit() {
+    const tLeft = window.decayTimeLeft;
+    if (tLeft === undefined) return;
+    initialized = true;
+    currentPhase = getPhase(tLeft);
+    jumpToPhase(currentPhase, tLeft);
+  })();
 })();
 
 window.decayReset = function () {
-  // restore spans
   document.querySelectorAll(".decay-token").forEach((span) => {
     span.style.backgroundColor = "";
     span.style.color = "";
-    if (originalTexts.has(span)) {
+    if (originalTexts && originalTexts.has(span)) {
       span.textContent = originalTexts.get(span);
     } else {
       span.textContent = span.dataset.original || span.textContent;
     }
   });
-  originalTexts.clear();
+  originalTexts && originalTexts.clear();
 
-  // restore images
   document.querySelectorAll("img").forEach((img) => {
     if (img._blackenWrapper) {
       img._blackenWrapper.parentNode.insertBefore(img, img._blackenWrapper);
@@ -233,14 +277,11 @@ window.decayReset = function () {
     }
   });
 
-  // restore body color
   document.body.style.backgroundColor = "";
-
-  // reset all decay states
   currentPhase = -1;
   cyclePercent = 10;
   blackoutStarted = false;
   blackoutSpans = [];
-  timeBudget = null;
+  initialized = false;
   clearDecayInterval();
 };

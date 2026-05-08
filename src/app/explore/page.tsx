@@ -4,7 +4,7 @@ import ExploreFrame from "./explore-frame";
 import ExploreHeader from "./explore-header";
 import ExploreSidebar from "./explore-sidebar";
 import SelectionPopup from "./selection-popup";
-import { usePreservation } from "./use-preservation";
+import { TIME_BUDGET, usePreservation } from "./use-preservation";
 import { type SetId, ALL_PAGES } from "./sets";
 import OutroContent from "./outro";
 import IntroContent from "./intro";
@@ -55,6 +55,7 @@ export default function Explore() {
             onSelection={onSelection}
             onImageSelection={onImageSelection}
             onClearSelection={onClearSelection}
+            timeBudget={TIME_BUDGET}
             timeLeft={timeLeft}
             budgetLeft={budgetLeft}
             onDecayComplete={onDecayComplete}
