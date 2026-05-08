@@ -138,7 +138,6 @@ interface ExploreFrameProps {
   onClearSelection?: () => void;
   timeBudget: number;
   timeLeft: number;
-  budgetLeft: number;
   onDecayComplete: () => void;
 }
 
@@ -150,7 +149,6 @@ export default function ExploreFrame({
   onClearSelection,
   timeBudget,
   timeLeft,
-  budgetLeft,
   onDecayComplete,
 }: ExploreFrameProps) {
   const initialPage = DEFAULT_URLS[activeSetId] ?? DEFAULT_URLS[1];
@@ -413,20 +411,24 @@ export default function ExploreFrame({
         </WindowContent>
         <div className="status-bar">
           <Frame
-            style={{ flex: 1, height: 40, padding: "2px 8px", fontSize: 20 }}
+            style={{
+              flex: 1,
+              height: 40,
+              padding: "4px 12px 2px 12px",
+              fontSize: 20,
+            }}
           >
             Page {indexInSet + 1} / {pagesInCurrentSet.length}
           </Frame>
           <Frame
-            style={{ flex: 1, height: 40, padding: "2px 8px", fontSize: 20 }}
+            style={{
+              flex: 1,
+              height: 40,
+            }}
           >
             {" "}
           </Frame>
-          <Frame
-            style={{ flex: 1, height: 40, padding: "2px 8px", fontSize: 20 }}
-          >
-            {" "}
-          </Frame>
+          <Frame style={{ flex: 1, height: 40 }}> </Frame>
           <div className="browser-buttons">
             <Button
               onClick={goPrevPage}

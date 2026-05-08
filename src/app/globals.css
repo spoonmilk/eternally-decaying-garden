@@ -181,6 +181,7 @@ span.name,
   display: flex;
   flex-flow: column nowrap;
   gap: 12px;
+  overflow-x: hidden;
 }
 
 .right li {
@@ -196,6 +197,10 @@ span.name,
 
 .url {
   font-size: 12px;
+  display: block;
+  width: 100%;
+  white-space: normal;
+  word-break: break-all;
   color: var(--text-secondary);
 }
 
