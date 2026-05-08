@@ -1,8 +1,5 @@
 "use client";
 
-import { Button, Window, WindowContent, WindowHeader } from "react95";
-import { ThemeProvider } from "styled-components";
-import original from "react95/dist/themes/original";
 import { ReactNode } from "react";
 
 interface OutroContentProps {

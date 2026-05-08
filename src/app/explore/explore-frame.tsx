@@ -15,25 +15,6 @@ import { ThemeProvider } from "styled-components";
 import original from "react95/dist/themes/original";
 import { ALL_PAGES, DEFAULT_URLS, PAGE_SETS } from "./sets";
 
-// const INITIAL_URL = "https://cel.cs.brown.edu/csci-1377-s26/";
-
-// const ALLOWED_DOMAINS = ["cel.cs.brown.edu"];
-
-// function isAllowed(url: string): boolean {
-//   try {
-//     const { hostname } = new URL(url);
-//     return ALLOWED_DOMAINS.some(
-//       (d) => hostname === d || hostname.endsWith("." + d),
-//     );
-//   } catch {
-//     return false;
-//   }
-// }
-
-// function toProxyUrl(url: string): string {
-//   return `/api/proxy?url=${encodeURIComponent(url)}`;
-// }
-
 interface ExploreFrameProps {
   onUrlChange?: (url: string) => void;
   activeSetId: number;
@@ -169,22 +150,6 @@ export default function ExploreFrame({
       onUrlChange?.(match.displayUrl);
     }
   }
-  // function navigateTo(url: string) {
-  //   let normalized = url.trim();
-  //   if (normalized && !/^[a-zA-Z][a-zA-Z0-9+\-.]*:\/\//.test(normalized)) {
-  //     normalized = "https://" + normalized;
-  //   }
-  //   setInputValue(normalized);
-  //   if (!isAllowed(normalized)) {
-  //     setBlockedUrl(normalized);
-  //     return;
-  //   }
-  //   setBlockedUrl(null);
-  //   pushHistory(normalized);
-  //   lastNavUrl.current = normalized;
-  //   onUrlChange?.(normalized);
-  //   iframeReplace(normalized);
-  // }
 
   function handleSearch() {
     navigateTo(inputUrl);
@@ -195,7 +160,6 @@ export default function ExploreFrame({
     historyIdx.current--;
     const url = navHistory.current[historyIdx.current];
     setInputUrl(url);
-    // setBlockedUrl(null);
     updateButtons();
     lastNavUrl.current = url;
     onUrlChange?.(url);
@@ -211,7 +175,6 @@ export default function ExploreFrame({
     historyIdx.current++;
     const url = navHistory.current[historyIdx.current];
     setInputUrl(url);
-    // setBlockedUrl(null);
     updateButtons();
     lastNavUrl.current = url;
     onUrlChange?.(url);
@@ -264,28 +227,6 @@ export default function ExploreFrame({
       );
     });
   }
-
-  // function handleLoad() {
-  //   const iframe = iframeRef.current;
-  //   if (!iframe) return;
-  //   let href: string | undefined;
-  //   try {
-  //     href = iframe.contentWindow?.location.href;
-  //   } catch {
-  //     return;
-  //   }
-  //   if (!href || href === "about:blank") return;
-  //   try {
-  //     const proxyParams = new URL(href, window.location.origin);
-  //     const realUrl = proxyParams.searchParams.get("url");
-  //     if (realUrl && realUrl !== lastNavUrl.current) {
-  //       lastNavUrl.current = realUrl;
-  //       pushHistory(realUrl);
-  //       setInputUrl(realUrl);
-  //       onUrlChange?.(realUrl);
-  //     }
-  //   } catch {}
-  // }
 
   return (
     <ThemeProvider theme={original}>
