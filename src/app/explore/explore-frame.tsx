@@ -322,7 +322,7 @@ export default function ExploreFrame({
           }}
         >
           <div className="browser-buttons">
-            <Button onClick={goBack} style={{ width: "40px", height: "40px" }}>
+            <Button style={{ width: "40px", height: "40px" }}>
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 width="15"
@@ -338,10 +338,7 @@ export default function ExploreFrame({
                 />
               </svg>
             </Button>
-            <Button
-              onClick={goForward}
-              style={{ width: "40px", height: "40px" }}
-            >
+            <Button style={{ width: "40px", height: "40px" }}>
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 width="15"
@@ -370,7 +367,6 @@ export default function ExploreFrame({
             className="search-input"
           />
           <Button
-            onClick={handleSearch}
             style={{
               padding: "6px 16px",
               whiteSpace: "nowrap",
@@ -397,65 +393,43 @@ export default function ExploreFrame({
             flexDirection: "column",
           }}
         >
-          <div style={{ flex: 1, minHeight: 0, overflow: "hidden" }}>
-            {timeLeft === 0 ? (
-              <div
-                style={{
-                  width: "100%",
-                  height: "100%",
-                  backgroundColor: "black",
-                  display: "flex",
-                  flexDirection: "column",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  gap: "24px",
-                }}
-              >
-                <p
-                  style={{
-                    color: "white",
-                    fontSize: 48,
-                    margin: 0,
-                    fontFamily: "MS Sans Serif",
-                  }}
-                >
-                  404 Not Found
-                </p>
-                <p
-                  style={{
-                    color: "white",
-                    fontSize: 20,
-                    margin: 0,
-                    fontFamily: "MS Sans Serif",
-                  }}
-                >
-                  This page has decayed. Please proceed to reflect.
+          {timeLeft === 0 ? (
+            <div className="not-found">
+              <div className="not-found-content">
+                <div className="not-found-headers">
+                  <h1>404</h1>
+                  <h2>Page Not Found</h2>
+                </div>
+
+                <p>
+                  {`The requested URL ${inputUrl} was not found on this server.`}
                 </p>
                 <Button
                   onClick={onDecayComplete}
                   style={{
                     fontSize: 20,
-                    padding: "8px 32px",
-                    marginTop: "8px",
+                    height: 40,
+                    width: "fit-content",
+                    padding: "8px 16px",
                   }}
                 >
-                  Reflect →
+                  Continue
                 </Button>
               </div>
-            ) : (
-              <iframe
-                ref={iframeRef}
-                src={iframeUrl}
-                onLoad={handleLoad}
-                style={{
-                  width: "100%",
-                  height: "100%",
-                  border: "none",
-                  display: "block",
-                }}
-              />
-            )}
-          </div>
+            </div>
+          ) : (
+            <iframe
+              ref={iframeRef}
+              src={iframeUrl}
+              onLoad={handleLoad}
+              style={{
+                width: "100%",
+                height: "100%",
+                border: "none",
+                display: "block",
+              }}
+            />
+          )}
         </WindowContent>
         <div
           style={{

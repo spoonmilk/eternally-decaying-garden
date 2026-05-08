@@ -361,6 +361,43 @@ span.name,
   transition: 150ms;
 }
 
+.not-found {
+  flex: 1;
+  min-height: 0;
+  overflow: "hidden";
+  width: 100%;
+  height: 100%;
+  background-color: black;
+  display: flex;
+  flex-flow: column nowrap;
+  align-items: center;
+  justify-content: center;
+  gap: 24px;
+}
+
+.not-found-content {
+  width: 100%;
+  max-width: 640px;
+  display: flex;
+  flex-flow: column nowrap;
+  gap: 48px;
+  color: white;
+}
+
+.not-found-headers {
+  display: flex;
+  flex-flow: column;
+  line-height: 1.3;
+}
+
+.not-found-content h1 {
+  font-size: 120px;
+}
+
+.not-found-content h2 {
+  font-size: 32px;
+}
+
 @font-face {
   font-family: "MS Sans Serif";
   src:
