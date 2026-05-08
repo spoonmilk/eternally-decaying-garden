@@ -285,6 +285,14 @@ span.name,
   background-color: white;
 }
 
+.status-bar {
+  display: flex;
+  flex-flow: row nowrap;
+  height: 40px;
+  margin-top: 8px;
+  margin-bottom: 2px;
+}
+
 .inter-content {
   width: 100%;
   height: 100%;

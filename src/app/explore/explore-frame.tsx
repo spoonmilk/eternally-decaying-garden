@@ -13,7 +13,122 @@ import {
 } from "react95";
 import { ThemeProvider } from "styled-components";
 import original from "react95/dist/themes/original";
-import { ALL_PAGES, DEFAULT_URLS, PAGE_SETS } from "./sets";
+import { ALL_PAGES, DEFAULT_URLS } from "./sets";
+
+const IconMinus = () => (
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    width="16"
+    height="4"
+    viewBox="0 0 16 4"
+  >
+    <path d="M0 0H16V4H0V0Z" fill="black" />
+  </svg>
+);
+
+const IconMaximize = () => (
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    width="18"
+    height="18"
+    viewBox="0 0 18 18"
+  >
+    <path
+      fillRule="evenodd"
+      clipRule="evenodd"
+      d="M18 0H0V18H18V0ZM16 4H2V16H16V4Z"
+      fill="black"
+    />
+  </svg>
+);
+
+const IconClose = () => (
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    width="16"
+    height="14"
+    viewBox="0 0 16 14"
+  >
+    <path
+      fillRule="evenodd"
+      clipRule="evenodd"
+      d="M0 0H4V2H6V4H10V2H12V0H16V2H14V4H12V6H10V8H12V10H14V12H16V14H12V12H10V10H6V12H4V14H0V12H2V10H4V8H6V6H4V4H2V2H0V0Z"
+      fill="black"
+    />
+  </svg>
+);
+
+const IconBack = () => (
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    width="15"
+    height="26"
+    viewBox="0 0 15 26"
+    fill="none"
+  >
+    <path
+      fillRule="evenodd"
+      clipRule="evenodd"
+      d="M14.7693 25.8462L14.7693 0L11.077 -1.59154e-07L11.077 3.69231L7.38467 3.69231L7.38467 7.38461L3.69236 7.38461L3.69236 11.0769L5.67295e-05 11.0769L5.65658e-05 14.7692L3.69236 14.7692L3.69236 18.4615L7.38467 18.4615L7.38467 22.1538L11.077 22.1538L11.077 25.8462L14.7693 25.8462Z"
+      fill="black"
+    />
+  </svg>
+);
+
+const IconForward = () => (
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    width="15"
+    height="26"
+    viewBox="0 0 15 26"
+    fill="none"
+  >
+    <path
+      fillRule="evenodd"
+      clipRule="evenodd"
+      d="M1.14557e-06 25.8462L0 0L3.69231 -1.59154e-07L3.69231 3.69231L7.38462 3.69231L7.38462 7.38461L11.0769 7.38461L11.0769 11.0769L14.7692 11.0769L14.7692 14.7692L11.0769 14.7692L11.0769 18.4615L7.38462 18.4615L7.38462 22.1538L3.69231 22.1538L3.69231 25.8462L1.14557e-06 25.8462Z"
+      fill="black"
+    />
+  </svg>
+);
+
+const IconArrowLeft = ({ disabled }: { disabled: boolean }) => (
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    width="10"
+    height="18"
+    viewBox="0 0 10 18"
+  >
+    <path
+      fillRule="evenodd"
+      clipRule="evenodd"
+      d="M10 18L10 0L7.5 -1.07761e-07V2.57143L5 2.57143V5.14286L2.5 5.14286L2.5 7.71429L0 7.71429V10.2857L2.5 10.2857V12.8571L5 12.8571V15.4286L7.5 15.4286V18L10 18Z"
+      fill={disabled ? "#808080" : "black"}
+    />
+  </svg>
+);
+
+const IconArrowRight = ({ disabled }: { disabled: boolean }) => (
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    width="10"
+    height="18"
+    viewBox="0 0 10 18"
+  >
+    <path
+      fillRule="evenodd"
+      clipRule="evenodd"
+      d="M0 18L0 0L2.5 -1.07761e-07V2.57143L5 2.57143V5.14286L7.5 5.14286L7.5 7.71429L10 7.71429V10.2857L7.5 10.2857V12.8571L5 12.8571V15.4286L2.5 15.4286V18L0 18Z"
+      fill={disabled ? "#808080" : "black"}
+    />
+  </svg>
+);
+
+const SET_NAMES: Record<number, string> = {
+  1: "Act 1: Timescales of the Internet",
+  2: "Act 2: Link rot, Consumption, Mechanisms of Loss",
+  3: "Act 3: Bias & Justice in Knowledge Work",
+};
 
 interface ExploreFrameProps {
   onUrlChange?: (url: string) => void;
@@ -26,12 +141,6 @@ interface ExploreFrameProps {
   budgetLeft: number;
   onDecayComplete: () => void;
 }
-
-const SET_NAMES: Record<number, string> = {
-  1: "Act 1: Timescales of the Internet",
-  2: "Act 2: Link rot, Consumption, Mechanisms of Loss",
-  3: "Act 3: Bias & Justice in Knowledge Work",
-};
 
 export default function ExploreFrame({
   onUrlChange,
@@ -50,10 +159,6 @@ export default function ExploreFrame({
   const [pageIndex, setPageIndex] = useState(
     ALL_PAGES.findIndex((p) => p.setId === activeSetId),
   );
-
-  // const [blockedUrl, setBlockedUrl] = useState<string | null>(null);
-  const [canGoBack, setCanGoBack] = useState(false);
-  const [canGoForward, setCanGoForward] = useState(false);
 
   const iframeRef = useRef<HTMLIFrameElement>(null);
   const navHistory = useRef<string[]>([initialPage.fileUrl]);
@@ -87,8 +192,6 @@ export default function ExploreFrame({
     navHistory.current = [newPage.fileUrl];
     historyIdx.current = 0;
     lastNavUrl.current = newPage.fileUrl;
-    setCanGoBack(false);
-    setCanGoForward(false);
     onUrlChange?.(newPage.displayUrl);
   }, [activeSetId]); // eslint-disable-line react-hooks/exhaustive-deps
 
@@ -128,63 +231,6 @@ export default function ExploreFrame({
     setIframeUrl(page.fileUrl);
     setInputUrl(page.displayUrl);
     onUrlChange?.(page.displayUrl);
-  }
-
-  function updateButtons() {
-    setCanGoBack(historyIdx.current > 0);
-    setCanGoForward(historyIdx.current < navHistory.current.length - 1);
-  }
-
-  function pushHistory(url: string) {
-    navHistory.current = navHistory.current.slice(0, historyIdx.current + 1);
-    navHistory.current.push(url);
-    historyIdx.current = navHistory.current.length - 1;
-    updateButtons();
-  }
-
-  function navigateTo(url: string) {
-    const match = ALL_PAGES.find((p) => p.displayUrl === url.trim());
-    if (match) {
-      setInputUrl(match.displayUrl);
-      pushHistory(match.fileUrl);
-      lastNavUrl.current = match.fileUrl;
-      setIframeUrl(match.fileUrl);
-      onUrlChange?.(match.displayUrl);
-    }
-  }
-
-  function handleSearch() {
-    navigateTo(inputUrl);
-  }
-
-  function goBack() {
-    if (historyIdx.current <= 0) return;
-    historyIdx.current--;
-    const url = navHistory.current[historyIdx.current];
-    setInputUrl(url);
-    updateButtons();
-    lastNavUrl.current = url;
-    onUrlChange?.(url);
-    try {
-      iframeRef.current!.contentWindow!.history.back();
-    } catch {
-      setIframeUrl(url);
-    }
-  }
-
-  function goForward() {
-    if (historyIdx.current >= navHistory.current.length - 1) return;
-    historyIdx.current++;
-    const url = navHistory.current[historyIdx.current];
-    setInputUrl(url);
-    updateButtons();
-    lastNavUrl.current = url;
-    onUrlChange?.(url);
-    try {
-      iframeRef.current!.contentWindow!.history.forward();
-    } catch {
-      setIframeUrl(url);
-    }
   }
 
   function handleLoad() {
@@ -264,54 +310,13 @@ export default function ExploreFrame({
 
           <div className="browser-buttons">
             <Button>
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                width="16"
-                height="4"
-                viewBox="0 0 16 4"
-                fill="none"
-              >
-                <path d="M0 0H16V4H0V0Z" fill="black" />
-              </svg>
+              <IconMinus />
             </Button>
             <Button>
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                width="18"
-                height="18"
-                viewBox="0 0 18 18"
-                fill="none"
-              >
-                <path
-                  fillRule="evenodd"
-                  clipRule="evenodd"
-                  d="M18 0H0V18H18V0ZM16 4H2V16H16V4Z"
-                  fill="black"
-                />
-              </svg>
+              <IconMaximize />
             </Button>
             <Button>
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                width="16"
-                height="14"
-                viewBox="0 0 16 14"
-                fill="none"
-              >
-                <g clipPath="url(#clip0_150_2901)">
-                  <path
-                    fillRule="evenodd"
-                    clipRule="evenodd"
-                    d="M0 0H4V2H6V4H10V2H12V0H16V2H14V4H12V6H10V8H12V10H14V12H16V14H12V12H10V10H6V12H4V14H0V12H2V10H4V8H6V6H4V4H2V2H0V0Z"
-                    fill="black"
-                  />
-                </g>
-                <defs>
-                  <clipPath id="clip0_150_2901">
-                    <rect width="16" height="14" fill="white" />
-                  </clipPath>
-                </defs>
-              </svg>
+              <IconClose />
             </Button>
           </div>
         </WindowHeader>
@@ -330,46 +335,14 @@ export default function ExploreFrame({
         >
           <div className="browser-buttons">
             <Button style={{ width: "40px", height: "40px" }}>
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                width="15"
-                height="26"
-                viewBox="0 0 15 26"
-                fill="none"
-              >
-                <path
-                  fillRule="evenodd"
-                  clipRule="evenodd"
-                  d="M14.7693 25.8462L14.7693 0L11.077 -1.59154e-07L11.077 3.69231L7.38467 3.69231L7.38467 7.38461L3.69236 7.38461L3.69236 11.0769L5.67295e-05 11.0769L5.65658e-05 14.7692L3.69236 14.7692L3.69236 18.4615L7.38467 18.4615L7.38467 22.1538L11.077 22.1538L11.077 25.8462L14.7693 25.8462Z"
-                  fill="black"
-                />
-              </svg>
+              <IconBack />
             </Button>
             <Button style={{ width: "40px", height: "40px" }}>
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                width="15"
-                height="26"
-                viewBox="0 0 15 26"
-                fill="none"
-              >
-                <path
-                  fillRule="evenodd"
-                  clipRule="evenodd"
-                  d="M1.14557e-06 25.8462L0 0L3.69231 -1.59154e-07L3.69231 3.69231L7.38462 3.69231L7.38462 7.38461L11.0769 7.38461L11.0769 11.0769L14.7692 11.0769L14.7692 14.7692L11.0769 14.7692L11.0769 18.4615L7.38462 18.4615L7.38462 22.1538L3.69231 22.1538L3.69231 25.8462L1.14557e-06 25.8462Z"
-                  fill="black"
-                />
-              </svg>
+              <IconForward />
             </Button>
           </div>
           <TextInput
             value={inputUrl}
-            onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-              setInputUrl(e.target.value)
-            }
-            onKeyDown={(e: React.KeyboardEvent) => {
-              if (e.key === "Enter") handleSearch();
-            }}
             style={{ flex: 1, height: "40px" }}
             className="search-input"
           />
@@ -438,14 +411,7 @@ export default function ExploreFrame({
             />
           )}
         </WindowContent>
-        <div
-          style={{
-            display: "flex",
-            height: 40,
-            marginTop: "8px",
-            marginBottom: "2px",
-          }}
-        >
+        <div className="status-bar">
           <Frame
             style={{ flex: 1, height: 40, padding: "2px 8px", fontSize: 20 }}
           >
@@ -473,20 +439,7 @@ export default function ExploreFrame({
                 padding: "6px 16px",
               }}
             >
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                width="10"
-                height="18"
-                viewBox="0 0 10 18"
-                fill="none"
-              >
-                <path
-                  fillRule="evenodd"
-                  clipRule="evenodd"
-                  d="M10 18L10 0L7.5 -1.07761e-07V2.57143L5 2.57143V5.14286L2.5 5.14286L2.5 7.71429L0 7.71429V10.2857L2.5 10.2857V12.8571L5 12.8571V15.4286L7.5 15.4286V18L10 18Z"
-                  fill={pageIndex === 0 ? "#808080" : "black"}
-                />
-              </svg>
+              <IconArrowLeft disabled={pageIndex === 0} />
               Prev
             </Button>
             <Button
@@ -501,24 +454,9 @@ export default function ExploreFrame({
               }}
             >
               Next
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                width="10"
-                height="18"
-                viewBox="0 0 10 18"
-                fill="none"
-              >
-                <path
-                  fillRule="evenodd"
-                  clipRule="evenodd"
-                  d="M0 18L0 0L2.5 -1.07761e-07V2.57143L5 2.57143V5.14286L7.5 5.14286L7.5 7.71429L10 7.71429V10.2857L7.5 10.2857V12.8571L5 12.8571V15.4286L2.5 15.4286V18L0 18Z"
-                  fill={
-                    indexInSet === pagesInCurrentSet.length - 1
-                      ? "#808080"
-                      : "black"
-                  }
-                />
-              </svg>
+              <IconArrowRight
+                disabled={indexInSet === pagesInCurrentSet.length - 1}
+              />
             </Button>
           </div>
         </div>
