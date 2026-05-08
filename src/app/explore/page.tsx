@@ -1,4 +1,5 @@
 "use client";
+
 import { useEffect, useRef, useState } from "react";
 import ExploreFrame from "./explore-frame";
 import ExploreHeader from "./explore-header";
@@ -78,8 +79,64 @@ const PROMPTS: Record<number, ReflectionPrompt[]> = {
   ],
 };
 
+type ContentData = {
+  introduction: string;
+  prose: [string, string, string];
+  expos: [string, string, string];
+  outro: string;
+};
+
+async function loadContent(): Promise<ContentData> {
+  const [introduction, prose1, prose2, prose3, expos1, expos2, expos3, outro] =
+    await Promise.all([
+      fetch("/content/introduction.md").then((r) => r.text()),
+      fetch("/content/prose1.md").then((r) => r.text()),
+      fetch("/content/prose2.md").then((r) => r.text()),
+      fetch("/content/prose3.md").then((r) => r.text()),
+      fetch("/content/expos1.md").then((r) => r.text()),
+      fetch("/content/expos2.md").then((r) => r.text()),
+      fetch("/content/expos3.md").then((r) => r.text()),
+      fetch("/content/outro.md").then((r) => r.text()),
+    ]);
+  return {
+    introduction,
+    prose: [prose1, prose2, prose3],
+    expos: [expos1, expos2, expos3],
+    outro,
+  };
+}
+
+function getIntroContent(screen: number, content: ContentData): string {
+  if (screen === 0) return content.introduction;
+  if (screen === 1) return content.prose[0];
+  return content.expos[0];
+}
+
+function introScreenProse(screen: number): boolean {
+  return screen === 1;
+}
+
+function getOutroContent(
+  setIndex: number,
+  screen: number,
+  content: ContentData,
+): string {
+  if (setIndex === 0) return screen === 0 ? content.prose[1] : content.expos[1];
+  if (setIndex === 1) return screen === 0 ? content.prose[2] : content.expos[2];
+  return content.outro;
+}
+
+function outroScreenProse(setIndex: number, screen: number): boolean {
+  return setIndex < 2 && screen === 0;
+}
+
 export default function Explore() {
   const currentUrlRef = useRef<string>(ALL_PAGES[0].displayUrl);
+  const [content, setContent] = useState<ContentData | null>(null);
+
+  useEffect(() => {
+    loadContent().then(setContent);
+  }, []);
 
   const {
     timeLeft,
@@ -90,23 +147,23 @@ export default function Explore() {
     selectionWordCount,
     popupPos,
     currentSetId,
+    phaseScreen,
     onSelection,
     onImageSelection,
     onClearSelection,
     save,
     phase,
-    beginSet,
+    advanceFromIntro,
     onDecayComplete,
     continueFromOutro,
   } = usePreservation(currentUrlRef);
 
-  // accordion open/close state
+  const setIndex = currentSetId - 1;
   const [openSetIds, setOpenSetIds] = useState<SetId[]>([currentSetId]);
   const [visiblePrompts, setVisiblePrompts] = useState<(typeof PROMPTS)[1]>([]);
   const shownPromptIds = useRef<Set<string>>(new Set());
   const decayPhase = getDecayPhase(timeLeft, TIME_BUDGET);
 
-  // auto open accordion for current set
   useEffect(() => {
     setOpenSetIds([currentSetId]);
   }, [currentSetId]);
@@ -146,8 +203,14 @@ export default function Explore() {
               onDismiss={() => dismissPrompt(p.id)}
             />
           ))}
-        {phase === "intro" && (
-          <IntroContent setId={currentSetId} onBegin={beginSet} />
+        {phase === "intro" && content && (
+          <IntroContent
+            setIndex={setIndex}
+            screen={phaseScreen}
+            content={getIntroContent(phaseScreen, content)}
+            isProse={introScreenProse(phaseScreen)}
+            onAdvance={advanceFromIntro}
+          />
         )}
         {phase === "explore" && (
           <ExploreFrame
@@ -163,9 +226,12 @@ export default function Explore() {
             onDecayComplete={onDecayComplete}
           />
         )}
-        {phase === "outro" && (
+        {phase === "outro" && content && (
           <OutroContent
-            completedSetId={currentSetId}
+            setIndex={setIndex}
+            screen={phaseScreen}
+            content={getOutroContent(setIndex, phaseScreen, content)}
+            isProse={outroScreenProse(setIndex, phaseScreen)}
             onContinue={continueFromOutro}
           />
         )}

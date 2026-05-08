@@ -4,7 +4,7 @@ import path from "path";
 import ReactMarkdown from "react-markdown";
 
 export default async function Home() {
-  const textFilePath = path.join(process.cwd(), "content", "introduction.md");
+  const textFilePath = path.join(process.cwd(), "public", "content", "introduction.md");
   const text = await fs.readFile(textFilePath, "utf8");
 
   return (

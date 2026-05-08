@@ -75,6 +75,9 @@ export function usePreservation(currentUrl?: React.RefObject<string>) {
   const currentSetIndexRef = useRef(currentSetIndex);
   currentSetIndexRef.current = currentSetIndex;
   const [phase, setPhase] = useState<"intro" | "explore" | "outro">("intro");
+  const [phaseScreen, setPhaseScreen] = useState(0);
+  const phaseScreenRef = useRef(phaseScreen);
+  phaseScreenRef.current = phaseScreen;
 
   // decrement timer, but only during explore phase
   useEffect(() => {
@@ -90,13 +93,14 @@ export function usePreservation(currentUrl?: React.RefObject<string>) {
     if (preserved.length === 0) return;
     if (phase !== "explore") return;
     setPhase("outro");
+    setPhaseScreen(0);
   }, [wordBudgetLeft, preserved, phase]);
 
-  // reset timer display when we move to next set
   useEffect(() => {
     setTimeLeft(TIME_BUDGET);
     setWordBudget(MAX_WORD_BUDGET);
-    setPhase("intro");
+    setPhaseScreen(0);
+    setPhase(currentSetIndex === 0 ? "intro" : "explore");
   }, [currentSetIndex]);
 
   function onSelection(text: string, rect: DOMRect) {
@@ -186,17 +190,27 @@ export function usePreservation(currentUrl?: React.RefObject<string>) {
     window.getSelection()?.removeAllRanges();
   }
 
-  function beginSet() {
-    setPhase("explore");
+  function advanceFromIntro() {
+    const introMaxScreen = currentSetIndex === 0 ? 2 : 0;
+    if (phaseScreen < introMaxScreen) {
+      setPhaseScreen((s) => s + 1);
+    } else {
+      setPhase("explore");
+      setPhaseScreen(0);
+    }
   }
 
   function onDecayComplete() {
     setPhase("outro");
+    setPhaseScreen(0);
   }
 
   function continueFromOutro() {
-    if (currentSetIndexRef.current < 2) {
-      setCurrentSetIndex((i) => i + 1); // phase resets to "intro" via the effect above
+    const outroMaxScreen = currentSetIndexRef.current < 2 ? 1 : 0;
+    if (phaseScreenRef.current < outroMaxScreen) {
+      setPhaseScreen((s) => s + 1);
+    } else if (currentSetIndexRef.current < 2) {
+      setCurrentSetIndex((i) => i + 1);
     } else {
       sessionStorage.setItem("preserved", JSON.stringify(preserved));
       router.push("/summary");
@@ -211,12 +225,13 @@ export function usePreservation(currentUrl?: React.RefObject<string>) {
     selectionWordCount,
     popupPos,
     currentSetId,
+    phaseScreen,
     onSelection,
     onImageSelection,
     onClearSelection,
     save,
     phase,
-    beginSet,
+    advanceFromIntro,
     onDecayComplete,
     continueFromOutro,
   };
