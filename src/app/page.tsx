@@ -41,6 +41,13 @@ export default async function Home() {
         <Link href="/explore" passHref>
           <button className="inter-button">Begin</button>
         </Link>
+        <p className="start-footnote">
+          <a href="/content/Copy of The Internet as an Eternally Decaying Garden Writing.pdf" download>
+            The text alone
+          </a>{" "}
+          for this project is available, along with a{" "}
+          <Link href="/bibliography">bibliography</Link> of all works that inspired the text or are directly cited.
+        </p>
       </div>
     </main>
   );
