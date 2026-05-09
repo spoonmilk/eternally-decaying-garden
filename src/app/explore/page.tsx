@@ -81,32 +81,46 @@ const PROMPTS: Record<number, ReflectionPrompt[]> = {
 
 type ContentData = {
   introduction: string;
-  prose: [string, string, string];
-  expos: [string, string, string];
+  prose: [string, string, string, string];
+  expos: [string, string, string, string];
   outro: string;
 };
 
 async function loadContent(): Promise<ContentData> {
-  const [introduction, prose1, prose2, prose3, expos1, expos2, expos3, outro] =
-    await Promise.all([
-      fetch("/content/introduction.md").then((r) => r.text()),
-      fetch("/content/prose1.md").then((r) => r.text()),
-      fetch("/content/prose2.md").then((r) => r.text()),
-      fetch("/content/prose3.md").then((r) => r.text()),
-      fetch("/content/expos1.md").then((r) => r.text()),
-      fetch("/content/expos2.md").then((r) => r.text()),
-      fetch("/content/expos3.md").then((r) => r.text()),
-      fetch("/content/outro.md").then((r) => r.text()),
-    ]);
+  const [
+    introduction,
+    prose1,
+    prose2,
+    prose3,
+    prose4,
+    expos1,
+    expos2,
+    expos3,
+    expos4,
+    outro,
+  ] = await Promise.all([
+    fetch("/content/introduction.md").then((r) => r.text()),
+    fetch("/content/prose1.md").then((r) => r.text()),
+    fetch("/content/prose2.md").then((r) => r.text()),
+    fetch("/content/prose3.md").then((r) => r.text()),
+    fetch("/content/prose4.md").then((r) => r.text()),
+    fetch("/content/expos1.md").then((r) => r.text()),
+    fetch("/content/expos2.md").then((r) => r.text()),
+    fetch("/content/expos3.md").then((r) => r.text()),
+    fetch("/content/expos4.md").then((r) => r.text()),
+
+    fetch("/content/outro.md").then((r) => r.text()),
+  ]);
   return {
     introduction,
-    prose: [prose1, prose2, prose3],
-    expos: [expos1, expos2, expos3],
+    prose: [prose1, prose2, prose3, prose4],
+    expos: [expos1, expos2, expos3, expos4],
     outro,
   };
 }
 
-function getIntroContent(screen: number, content: ContentData): string {
+function getIntroContent(screen: number, content: ContentData | null): string {
+  if (!content) return "";
   if (screen === 0) return content.introduction;
   if (screen === 1) return content.prose[0];
   return content.expos[0];
@@ -119,15 +133,18 @@ function introScreenProse(screen: number): boolean {
 function getOutroContent(
   setIndex: number,
   screen: number,
-  content: ContentData,
+  content: ContentData | null,
 ): string {
+  if (!content) return "";
   if (setIndex === 0) return screen === 0 ? content.prose[1] : content.expos[1];
   if (setIndex === 1) return screen === 0 ? content.prose[2] : content.expos[2];
+  if (screen === 0) return content.prose[3];
+  if (screen === 1) return content.expos[3];
   return content.outro;
 }
 
 function outroScreenProse(setIndex: number, screen: number): boolean {
-  return setIndex < 2 && screen === 0;
+  return screen === 0;
 }
 
 export default function Explore() {

@@ -339,12 +339,42 @@ span.name,
   font-style: italic;
 }
 
+.redac-70 {
+  font-family: redaction-70, sans-serif;
+  font-style: italic;
+}
+
+h1.site-title {
+  text-align: left;
+  font-size: 64px;
+  line-height: 1.3;
+}
+
+main.start {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-flow: column nowrap;
+  align-items: center;
+  justify-content: center;
+}
+
+.start-content {
+  width: 100%;
+  max-width: fit-content;
+  display: flex;
+  flex-flow: column nowrap;
+  align-items: start;
+  justify-content: center;
+  gap: 24px;
+}
+
 .inter-body {
   width: 100%;
   max-width: 640px;
   display: flex;
   flex-flow: column nowrap;
-  gap: 24px;
+  gap: 36px;
 }
 
 .intro-body {

@@ -1,47 +1,46 @@
 import Link from "next/link";
 import fs from "fs/promises";
 import path from "path";
-import ReactMarkdown from "react-markdown";
+import "./globals.css";
 
 export default async function Home() {
-  const textFilePath = path.join(process.cwd(), "public", "content", "introduction.md");
+  const textFilePath = path.join(
+    process.cwd(),
+    "public",
+    "content",
+    "introduction.md",
+  );
   const text = await fs.readFile(textFilePath, "utf8");
 
   return (
-    <main
-      style={{
-        display: "flex",
-        flexDirection: "column",
-        alignItems: "center",
-        justifyContent: "center",
-        minHeight: "100vh",
-      }}
-    >
-      <div style={{ border: "1px solid", width: 600 }}>
-        <div
-          style={{ borderBottom: "1px solid", padding: 8, fontWeight: "500" }}
-        >
-          The Internet as an Eternally Decaying Garden
-        </div>
-
-        <section style={{ padding: 24 }}>
-          <ReactMarkdown>{text}</ReactMarkdown>
-        </section>
-
-        <nav
-          style={{
-            borderTop: "1px solid",
-            padding: 8,
-            display: "flex",
-            justifyContent: "space-between",
-            fontWeight: "500",
-          }}
-        >
-          <button type="button">← Back</button>
-          <Link href="/explore" passHref>
-            <button type="button">Next →</button>
-          </Link>
-        </nav>
+    <main className="start">
+      <div className="start-content">
+        <h1 className="site-title">
+          <span className="redac-reg">The </span>
+          <span className="redac-20" style={{ backgroundColor: "cyan" }}>
+            Inter
+          </span>
+          <span className="redac-20">net</span>
+          <br></br>
+          <span className="redac-35" style={{ backgroundColor: "yellow" }}>
+            as
+          </span>
+          <span className="redac-35"> an</span>
+          <br></br>
+          <span className="redac-50">Eternally </span>
+          <span className="redac-50" style={{ backgroundColor: "magenta" }}>
+            Decay
+          </span>
+          <span className="redac-50">ing</span>
+          <br></br>
+          <span className="redac-70">Gar</span>
+          <span className="redac-70" style={{ backgroundColor: "black" }}>
+            den
+          </span>
+        </h1>
+        <Link href="/explore" passHref>
+          <button className="inter-button">Begin</button>
+        </Link>
       </div>
     </main>
   );

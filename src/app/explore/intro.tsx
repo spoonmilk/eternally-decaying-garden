@@ -20,10 +20,10 @@ export default function IntroContent({
     <div className="inter-content">
       {screen === 1 && (
         <h1>
-          <span className="redac-reg">Prelude 1 // </span>
-          <span className="redac-20">Timescales</span>
-          <span className="redac-35"> of the </span>
-          <span className="redac-50">Internet</span>
+          <span className="redac-reg">Introduction // </span>
+          <span className="redac-20">Definitions, </span>
+          <span className="redac-35">Preamble, </span>
+          <span className="redac-50">Expectations</span>
         </h1>
       )}
       <div className={isProse ? "intro-body" : "inter-body"}>

@@ -206,7 +206,7 @@ export function usePreservation(currentUrl?: React.RefObject<string>) {
   }
 
   function continueFromOutro() {
-    const outroMaxScreen = currentSetIndexRef.current < 2 ? 1 : 0;
+    const outroMaxScreen = currentSetIndexRef.current < 2 ? 1 : 2;
     if (phaseScreenRef.current < outroMaxScreen) {
       setPhaseScreen((s) => s + 1);
     } else if (currentSetIndexRef.current < 2) {
