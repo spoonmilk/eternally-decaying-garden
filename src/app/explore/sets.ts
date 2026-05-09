@@ -14,7 +14,7 @@ export const PAGE_SETS: Record<SetId, string[]> = {
   ],
   3: [
     "https://designjustice.mitpress.mit.edu/pub/ap8rgw5e/release/1",
-    "https://sondraperry.com/IT-S-IN-THE-GAME-18-at-Bridget-Donahue",
+    "https://www.eff.org/deeplinks/2026/03/rep-finke-was-right-age-gating-isnt-about-kids-its-about-control",
     "https://blog.giovanh.com/blog/2022/07/28/the-genocidaires-people/?campaign=sb_re",
   ],
 };
@@ -68,7 +68,7 @@ export const ALL_PAGES = [
   {
     setId: 3 as SetId,
     fileUrl: "/pages/set3-page2.html",
-    displayUrl: "https://sondraperry.com/IT-S-IN-THE-GAME-18-at-Bridget-Donahue",
+    displayUrl: "https://www.eff.org/deeplinks/2026/03/rep-finke-was-right-age-gating-isnt-about-kids-its-about-control",
   },
   {
     setId: 3 as SetId,
