@@ -1,0 +1,1491 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Set 2 - Page 1: CSCI 1377</title>
+    <style>
+      body {
+        margin: 0;
+        background-color: white;
+        color: black;
+        font-family: "MS Sans Serif", sans-serif;
+        line-height: 1.75;
+      }
+
+      main {
+        max-width: 800px;
+        margin: 0 auto;
+        padding: 64px 24px;
+      }
+
+      h1 {
+        font-size: 40px;
+        font-weight: bold;
+        line-height: 1.5;
+        margin-bottom: 8px;
+      }
+
+      h2 {
+        font-size: 32px;
+        font-weight: bold;
+        margin-top: 64px;
+        margin-bottom: 8px;
+        border-bottom: 1px solid #ccc;
+        padding-bottom: 4px;
+      }
+
+      h3 {
+        font-size: 24px;
+        font-weight: bold;
+        margin-bottom: 2px;
+        margin-top: 24px;
+      }
+
+      h4 {
+        font-size: 20px;
+        font-weight: bold;
+        margin-top: 20px;
+      }
+
+      p {
+        font-size: 18px;
+        display: flex;
+        flex-flow: row wrap;
+        gap: 0;
+        margin: 4px 0;
+      }
+
+      ul {
+        padding-left: 24px;
+      }
+
+      li {
+        display: flex;
+        flex-flow: row wrap;
+        gap: 0px;
+      }
+
+      span {
+        margin: 0;
+        padding: 4px 3px 4px 4px;
+      }
+
+      img {
+        height: auto;
+        display: inline-block;
+      }
+
+      img.portrait {
+        width: 160px;
+        object-fit: cover;
+        border-radius: 8px;
+        vertical-align: top;
+      }
+
+      img.avatar {
+        width: 36px;
+        vertical-align: middle;
+      }
+
+      img.mascot {
+        width: 120px;
+        display: block;
+        margin: 16px 0;
+      }
+
+      .section {
+        margin-bottom: 32px;
+      }
+
+      .lecture-row {
+        border-top: 1px solid #ccc;
+        padding: 12px 0;
+        display: flex;
+        gap: 16px;
+        flex-wrap: wrap;
+      }
+
+      .lecture-date {
+        width: 48px;
+        flex-shrink: 0;
+        font-size: 16px;
+        color: #555;
+      }
+
+      .lecture-title {
+        width: 200px;
+        flex-shrink: 0;
+      }
+
+      .lecture-readings {
+        flex: 1;
+      }
+
+      .staff-grid {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 24px;
+        margin-top: 16px;
+      }
+
+      .staff-member {
+        text-align: center;
+        width: 160px;
+      }
+
+      .assignment-row {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        border-top: 1px solid #ccc;
+        padding: 10px 0;
+      }
+
+      .assignment-dates {
+        margin-left: auto;
+        display: flex;
+        gap: 48px;
+        font-size: 16px;
+      }
+    </style>
+  </head>
+  <script>
+    document.addEventListener("mouseup", () => {
+      const selection = window.getSelection();
+      if (
+        !selection ||
+        selection.rangeCount === 0 ||
+        selection.toString().trim().length === 0
+      ) {
+        window.parent.postMessage({ type: "CLEAR_SELECTION" }, "*");
+        return;
+      }
+      const range = selection.getRangeAt(0);
+      const rect = range.getBoundingClientRect();
+      window.parent.postMessage(
+        {
+          type: "SELECTION",
+          text: selection.toString(),
+          rect: {
+            top: rect.top,
+            left: rect.left,
+            width: rect.width,
+            height: rect.height,
+          },
+        },
+        "*",
+      );
+    });
+
+    document.addEventListener("click", (e) => {
+      const target = e.target;
+      if (target instanceof HTMLImageElement) {
+        const rect = target.getBoundingClientRect();
+        window.parent.postMessage(
+          {
+            type: "IMAGE_SELECTION",
+            src: target.src,
+            rect: {
+              top: rect.top,
+              left: rect.left,
+              width: rect.width,
+              height: rect.height,
+            },
+          },
+          "*",
+        );
+      }
+    });
+  </script>
+  <body>
+    <main>
+      <!-- HEADER -->
+      <div class="section">
+        <img
+          class="mascot"
+          src="/sites/csci-1377/assets/static/ditto_gif.Bic__pze.gif"
+          alt="Ditto"
+        />
+        <h1>
+          <span class="decay-token" data-original="Tools">Tools</span>
+          <span class="decay-token" data-original="for">for</span>
+          <span class="decay-token" data-original="Thought">Thought</span>
+        </h1>
+        <h3>
+          <span class="decay-token" data-original="Spring">Spring</span>
+          <span class="decay-token" data-original="2026">2026</span>
+        </h3>
+        <p>
+          <span class="decay-token" data-original="Instructor:"
+            >Instructor:</span
+          >
+          <span class="decay-token" data-original="Will">Will</span>
+          <span class="decay-token" data-original="Crichton">Crichton</span>
+        </p>
+        <p>
+          <span class="decay-token" data-original="Lectures:">Lectures:</span>
+          <span class="decay-token" data-original="Tu/Thu">Tu/Thu</span>
+          <span class="decay-token" data-original="10:30–11:50am,"
+            >10:30–11:50am,</span
+          >
+          <span class="decay-token" data-original="CIT">CIT</span>
+          <span class="decay-token" data-original="477">477</span>
+        </p>
+        <p>
+          <span class="decay-token" data-original="Humanity's">Humanity's</span>
+          <span class="decay-token" data-original="technological"
+            >technological</span
+          >
+          <span class="decay-token" data-original="progress">progress</span>
+          <span class="decay-token" data-original="is">is</span>
+          <span class="decay-token" data-original="defined">defined</span>
+          <span class="decay-token" data-original="in">in</span>
+          <span class="decay-token" data-original="part">part</span>
+          <span class="decay-token" data-original="by">by</span>
+          <span class="decay-token" data-original="the">the</span>
+          <span class="decay-token" data-original="development"
+            >development</span
+          >
+          <span class="decay-token" data-original="of">of</span>
+          <span class="decay-token" data-original="tools">tools</span>
+          <span class="decay-token" data-original="for">for</span>
+          <span class="decay-token" data-original="thought">thought</span>
+          <span class="decay-token" data-original="(TfT)">(TfT)</span>
+          <span class="decay-token" data-original="which">which</span>
+          <span class="decay-token" data-original="augment">augment</span>
+          <span class="decay-token" data-original="our">our</span>
+          <span class="decay-token" data-original="cognitive">cognitive</span>
+          <span class="decay-token" data-original="capabilities:"
+            >capabilities:</span
+          >
+          <span class="decay-token" data-original="mnemonics,">mnemonics,</span>
+          <span class="decay-token" data-original="writing,">writing,</span>
+          <span class="decay-token" data-original="diagrams,">diagrams,</span>
+          <span class="decay-token" data-original="calculators,"
+            >calculators,</span
+          >
+          <span class="decay-token" data-original="notation,">notation,</span>
+          <span class="decay-token" data-original="and">and</span>
+          <span class="decay-token" data-original="more.">more.</span>
+          <span class="decay-token" data-original="Computers">Computers</span>
+          <span class="decay-token" data-original="have">have</span>
+          <span class="decay-token" data-original="powered">powered</span>
+          <span class="decay-token" data-original="a">a</span>
+          <span class="decay-token" data-original="TfT">TfT</span>
+          <span class="decay-token" data-original="revolution,"
+            >revolution,</span
+          >
+          <span class="decay-token" data-original="as">as</span>
+          <span class="decay-token" data-original="seen">seen</span>
+          <span class="decay-token" data-original="through">through</span>
+          <span class="decay-token" data-original="software">software</span>
+          <span class="decay-token" data-original="such">such</span>
+          <span class="decay-token" data-original="as">as</span>
+          <span class="decay-token" data-original="data">data</span>
+          <span class="decay-token" data-original="visualizations,"
+            >visualizations,</span
+          >
+          <span class="decay-token" data-original="search">search</span>
+          <span class="decay-token" data-original="engines,">engines,</span>
+          <span class="decay-token" data-original="digital">digital</span>
+          <span class="decay-token" data-original="maps,">maps,</span>
+          <span class="decay-token" data-original="computational"
+            >computational</span
+          >
+          <span class="decay-token" data-original="notebooks,">notebooks,</span>
+          <span class="decay-token" data-original="and">and</span>
+          <span class="decay-token" data-original="generative">generative</span>
+          <span class="decay-token" data-original="AI.">AI.</span>
+        </p>
+        <p>
+          <span class="decay-token" data-original="We">We</span>
+          <span class="decay-token" data-original="will">will</span>
+          <span class="decay-token" data-original="explore">explore</span>
+          <span class="decay-token" data-original="computational"
+            >computational</span
+          >
+          <span class="decay-token" data-original="TfT">TfT</span>
+          <span class="decay-token" data-original="from">from</span>
+          <span class="decay-token" data-original="several">several</span>
+          <span class="decay-token" data-original="perspectives:"
+            >perspectives:</span
+          >
+        </p>
+        <ul>
+          <li>
+            <span class="decay-token" data-original="Psychology:"
+              >Psychology:</span
+            >
+            <span class="decay-token" data-original="How">How</span>
+            <span class="decay-token" data-original="can">can</span>
+            <span class="decay-token" data-original="theories">theories</span>
+            <span class="decay-token" data-original="of">of</span>
+            <span class="decay-token" data-original="cognition">cognition</span>
+            <span class="decay-token" data-original="inform">inform</span>
+            <span class="decay-token" data-original="the">the</span>
+            <span class="decay-token" data-original="design">design</span>
+            <span class="decay-token" data-original="of">of</span>
+            <span class="decay-token" data-original="TfT?">TfT?</span>
+            <span class="decay-token" data-original="We">We</span>
+            <span class="decay-token" data-original="will">will</span>
+            <span class="decay-token" data-original="focus">focus</span>
+            <span class="decay-token" data-original="principally"
+              >principally</span
+            >
+            <span class="decay-token" data-original="on">on</span>
+            <span class="decay-token" data-original="theories">theories</span>
+            <span class="decay-token" data-original="of">of</span>
+            <span class="decay-token" data-original="memory,">memory,</span>
+            <span class="decay-token" data-original="perception,"
+              >perception,</span
+            >
+            <span class="decay-token" data-original="problem">problem</span>
+            <span class="decay-token" data-original="solving,">solving,</span>
+            <span class="decay-token" data-original="and">and</span>
+            <span class="decay-token" data-original="learning.">learning.</span>
+          </li>
+          <li>
+            <span class="decay-token" data-original="History:">History:</span>
+            <span class="decay-token" data-original="What">What</span>
+            <span class="decay-token" data-original="can">can</span>
+            <span class="decay-token" data-original="we">we</span>
+            <span class="decay-token" data-original="learn">learn</span>
+            <span class="decay-token" data-original="from">from</span>
+            <span class="decay-token" data-original="the">the</span>
+            <span class="decay-token" data-original="near">near</span>
+            <span class="decay-token" data-original="and">and</span>
+            <span class="decay-token" data-original="distant">distant</span>
+            <span class="decay-token" data-original="past">past</span>
+            <span class="decay-token" data-original="of">of</span>
+            <span class="decay-token" data-original="TfT">TfT</span>
+            <span class="decay-token" data-original="to">to</span>
+            <span class="decay-token" data-original="build">build</span>
+            <span class="decay-token" data-original="a">a</span>
+            <span class="decay-token" data-original="better">better</span>
+            <span class="decay-token" data-original="future?">future?</span>
+            <span class="decay-token" data-original="We">We</span>
+            <span class="decay-token" data-original="will">will</span>
+            <span class="decay-token" data-original="examine">examine</span>
+            <span class="decay-token" data-original="TfT">TfT</span>
+            <span class="decay-token" data-original="ranging">ranging</span>
+            <span class="decay-token" data-original="from">from</span>
+            <span class="decay-token" data-original="oral">oral</span>
+            <span class="decay-token" data-original="tradition">tradition</span>
+            <span class="decay-token" data-original="to">to</span>
+            <span class="decay-token" data-original="medieval">medieval</span>
+            <span class="decay-token" data-original="codices">codices</span>
+            <span class="decay-token" data-original="to">to</span>
+            <span class="decay-token" data-original="the">the</span>
+            <span class="decay-token" data-original="origins">origins</span>
+            <span class="decay-token" data-original="of">of</span>
+            <span class="decay-token" data-original="the">the</span>
+            <span class="decay-token" data-original="modern">modern</span>
+            <span class="decay-token" data-original="internet.">internet.</span>
+          </li>
+          <li>
+            <span class="decay-token" data-original="Engineering:"
+              >Engineering:</span
+            >
+            <span class="decay-token" data-original="What">What</span>
+            <span class="decay-token" data-original="are">are</span>
+            <span class="decay-token" data-original="the">the</span>
+            <span class="decay-token" data-original="design">design</span>
+            <span class="decay-token" data-original="trade-offs"
+              >trade-offs</span
+            >
+            <span class="decay-token" data-original="involved">involved</span>
+            <span class="decay-token" data-original="in">in</span>
+            <span class="decay-token" data-original="building">building</span>
+            <span class="decay-token" data-original="TfT?">TfT?</span>
+            <span class="decay-token" data-original="How">How</span>
+            <span class="decay-token" data-original="can">can</span>
+            <span class="decay-token" data-original="we">we</span>
+            <span class="decay-token" data-original="build">build</span>
+            <span class="decay-token" data-original="TfTs">TfTs</span>
+            <span class="decay-token" data-original="that">that</span>
+            <span class="decay-token" data-original="are">are</span>
+            <span class="decay-token" data-original="easy">easy</span>
+            <span class="decay-token" data-original="to">to</span>
+            <span class="decay-token" data-original="archive,">archive,</span>
+            <span class="decay-token" data-original="scale,">scale,</span>
+            <span class="decay-token" data-original="share,">share,</span>
+            <span class="decay-token" data-original="and">and</span>
+            <span class="decay-token" data-original="customize?"
+              >customize?</span
+            >
+          </li>
+        </ul>
+      </div>
+
+      <!-- LECTURES -->
+      <h2>
+        <span class="decay-token" data-original="Lectures">Lectures</span>
+      </h2>
+
+      <div class="lecture-row">
+        <div class="lecture-date">
+          <span class="decay-token" data-original="01/22">01/22</span>
+        </div>
+        <div class="lecture-title">
+          <p>
+            <span class="decay-token" data-original="Introduction"
+              >Introduction</span
+            >
+          </p>
+        </div>
+        <div class="lecture-readings">
+          <ul>
+            <li>
+              <span class="decay-token" data-original="Vannevar">Vannevar</span>
+              <span class="decay-token" data-original="Bush.">Bush.</span>
+              <span class="decay-token" data-original='"As'>"As</span>
+              <span class="decay-token" data-original="We">We</span>
+              <span class="decay-token" data-original="May">May</span>
+              <span class="decay-token" data-original='Think"'>Think"</span>
+              <span class="decay-token" data-original="(1945)">(1945)</span>
+            </li>
+            <li>
+              <span class="decay-token" data-original="Douglas">Douglas</span>
+              <span class="decay-token" data-original="Engelbart."
+                >Engelbart.</span
+              >
+              <span class="decay-token" data-original='"Mother'>"Mother</span>
+              <span class="decay-token" data-original="of">of</span>
+              <span class="decay-token" data-original="All">All</span>
+              <span class="decay-token" data-original='Demos"'>Demos"</span>
+              <span class="decay-token" data-original="(1968)">(1968)</span>
+            </li>
+            <li>
+              <span class="decay-token" data-original="Alan">Alan</span>
+              <span class="decay-token" data-original="Kay.">Kay.</span>
+              <span class="decay-token" data-original='"Dynabook:"'
+                >"Dynabook:</span
+              >
+              <span class="decay-token" data-original="The">The</span>
+              <span class="decay-token" data-original="Complete">Complete</span>
+              <span class="decay-token" data-original='Story"'>Story"</span>
+              <span class="decay-token" data-original="(1996)">(1996)</span>
+            </li>
+            <li>
+              <span class="decay-token" data-original="Bret">Bret</span>
+              <span class="decay-token" data-original="Victor.">Victor.</span>
+              <span class="decay-token" data-original="Computational"
+                >Computational</span
+              >
+              <span class="decay-token" data-original="Public">Public</span>
+              <span class="decay-token" data-original="Space">Space</span>
+              <span class="decay-token" data-original="(2024)">(2024)</span>
+            </li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="lecture-row">
+        <div class="lecture-date">
+          <span class="decay-token" data-original="01/27">01/27</span>
+        </div>
+        <div class="lecture-title">
+          <p>
+            <span class="decay-token" data-original="Mnemonics">Mnemonics</span>
+            <span class="decay-token" data-original="I">I</span>
+          </p>
+          <p>
+            <span class="decay-token" data-original="Science">Science</span>
+            <span class="decay-token" data-original="and">and</span>
+            <span class="decay-token" data-original="Tradition">Tradition</span>
+            <span class="decay-token" data-original="of">of</span>
+            <span class="decay-token" data-original="Memory">Memory</span>
+          </p>
+        </div>
+        <div class="lecture-readings">
+          <ul>
+            <li>
+              <span class="decay-token" data-original="John">John</span>
+              <span class="decay-token" data-original="Anderson."
+                >Anderson.</span
+              >
+              <span class="decay-token" data-original="Cognitive"
+                >Cognitive</span
+              >
+              <span class="decay-token" data-original="Psychology"
+                >Psychology</span
+              >
+              <span class="decay-token" data-original="(2020).">( 2020).</span>
+              <span class="decay-token" data-original="Chs">Chs</span>
+              <span class="decay-token" data-original="6–7">6–7</span>
+            </li>
+            <li>
+              <span class="decay-token" data-original="Walter">Walter</span>
+              <span class="decay-token" data-original="Ong.">Ong.</span>
+              <span class="decay-token" data-original="Orality">Orality</span>
+              <span class="decay-token" data-original="and">and</span>
+              <span class="decay-token" data-original="Literacy">Literacy</span>
+              <span class="decay-token" data-original="(1982)">(1982)</span>
+            </li>
+            <li>
+              <span class="decay-token" data-original="David">David</span>
+              <span class="decay-token" data-original="Rubin.">Rubin.</span>
+              <span class="decay-token" data-original="Memory">Memory</span>
+              <span class="decay-token" data-original="in">in</span>
+              <span class="decay-token" data-original="Oral">Oral</span>
+              <span class="decay-token" data-original="Traditions"
+                >Traditions</span
+              >
+              <span class="decay-token" data-original="(1997)">(1997)</span>
+            </li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="lecture-row">
+        <div class="lecture-date">
+          <span class="decay-token" data-original="01/29">01/29</span>
+        </div>
+        <div class="lecture-title">
+          <p>
+            <span class="decay-token" data-original="Mnemonics">Mnemonics</span>
+            <span class="decay-token" data-original="II">II</span>
+          </p>
+          <p>
+            <span class="decay-token" data-original="Spaced">Spaced</span>
+            <span class="decay-token" data-original="Repetition"
+              >Repetition</span
+            >
+            <span class="decay-token" data-original="Systems">Systems</span>
+          </p>
+        </div>
+        <div class="lecture-readings">
+          <ul>
+            <li>
+              <span class="decay-token" data-original="Gwern">Gwern</span>
+              <span class="decay-token" data-original="Branwen.">Branwen.</span>
+              <span class="decay-token" data-original='"Spaced'>"Spaced</span>
+              <span class="decay-token" data-original="Repetition"
+                >Repetition</span
+              >
+              <span class="decay-token" data-original="for">for</span>
+              <span class="decay-token" data-original="Efficient"
+                >Efficient</span
+              >
+              <span class="decay-token" data-original='Learning"'
+                >Learning"</span
+              >
+            </li>
+            <li>
+              <span class="decay-token" data-original="Matuschak"
+                >Matuschak</span
+              >
+              <span class="decay-token" data-original="and">and</span>
+              <span class="decay-token" data-original="Nielsen.">Nielsen.</span>
+              <span class="decay-token" data-original='"How'>"How</span>
+              <span class="decay-token" data-original="can">can</span>
+              <span class="decay-token" data-original="we">we</span>
+              <span class="decay-token" data-original="develop">develop</span>
+              <span class="decay-token" data-original="transformative"
+                >transformative</span
+              >
+              <span class="decay-token" data-original="tools">tools</span>
+              <span class="decay-token" data-original="for">for</span>
+              <span class="decay-token" data-original='thought?"'
+                >thought?"</span
+              >
+              <span class="decay-token" data-original="(2019)">(2019)</span>
+            </li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="lecture-row">
+        <div class="lecture-date">
+          <span class="decay-token" data-original="02/03">02/03</span>
+        </div>
+        <div class="lecture-title">
+          <p>
+            <span class="decay-token" data-original="Reading">Reading</span>
+            <span class="decay-token" data-original="I">I</span>
+          </p>
+          <p>
+            <span class="decay-token" data-original="Technology"
+              >Technology</span
+            >
+            <span class="decay-token" data-original="of">of</span>
+            <span class="decay-token" data-original="the">the</span>
+            <span class="decay-token" data-original="Written">Written</span>
+            <span class="decay-token" data-original="Word">Word</span>
+          </p>
+        </div>
+        <div class="lecture-readings">
+          <ul>
+            <li>
+              <span class="decay-token" data-original="Steven">Steven</span>
+              <span class="decay-token" data-original="Fischer.">Fischer.</span>
+              <span class="decay-token" data-original="A">A</span>
+              <span class="decay-token" data-original="History">History</span>
+              <span class="decay-token" data-original="of">of</span>
+              <span class="decay-token" data-original="Writing">Writing</span>
+              <span class="decay-token" data-original="(2020)">(2020)</span>
+            </li>
+            <li>
+              <span class="decay-token" data-original="Rayner">Rayner</span>
+              <span class="decay-token" data-original="et">et</span>
+              <span class="decay-token" data-original="al.">al.</span>
+              <span class="decay-token" data-original="Psychology"
+                >Psychology</span
+              >
+              <span class="decay-token" data-original="of">of</span>
+              <span class="decay-token" data-original="Reading">Reading</span>
+              <span class="decay-token" data-original="(2012)">(2012)</span>
+            </li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="lecture-row">
+        <div class="lecture-date">
+          <span class="decay-token" data-original="02/05">02/05</span>
+        </div>
+        <div class="lecture-title">
+          <p>
+            <span class="decay-token" data-original="Reading">Reading</span>
+            <span class="decay-token" data-original="II">II</span>
+          </p>
+          <p>
+            <span class="decay-token" data-original="Reading">Reading</span>
+            <span class="decay-token" data-original="Augmentation"
+              >Augmentation</span
+            >
+            <span class="decay-token" data-original="Systems">Systems</span>
+          </p>
+        </div>
+        <div class="lecture-readings">
+          <ul>
+            <li>
+              <span class="decay-token" data-original="Sellen">Sellen</span>
+              <span class="decay-token" data-original="and">and</span>
+              <span class="decay-token" data-original="Harper.">Harper.</span>
+              <span class="decay-token" data-original="The">The</span>
+              <span class="decay-token" data-original="Myth">Myth</span>
+              <span class="decay-token" data-original="of">of</span>
+              <span class="decay-token" data-original="the">the</span>
+              <span class="decay-token" data-original="Paperless"
+                >Paperless</span
+              >
+              <span class="decay-token" data-original="Office">Office</span>
+              <span class="decay-token" data-original="(2003)">(2003)</span>
+            </li>
+            <li>
+              <span class="decay-token" data-original="Bret">Bret</span>
+              <span class="decay-token" data-original="Victor.">Victor.</span>
+              <span class="decay-token" data-original='"Explorable'
+                >"Explorable</span
+              >
+              <span class="decay-token" data-original='Explanations"'
+                >Explanations"</span
+              >
+              <span class="decay-token" data-original="(2011)">(2011)</span>
+            </li>
+            <li>
+              <span class="decay-token" data-original="Lo">Lo</span>
+              <span class="decay-token" data-original="et">et</span>
+              <span class="decay-token" data-original="al.">al.</span>
+              <span class="decay-token" data-original='"The'>"The</span>
+              <span class="decay-token" data-original="Semantic">Semantic</span>
+              <span class="decay-token" data-original="Reader">Reader</span>
+              <span class="decay-token" data-original='Project"'>Project"</span>
+              <span class="decay-token" data-original="(2024)">(2024)</span>
+            </li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- ASSIGNMENTS -->
+      <h2>
+        <span class="decay-token" data-original="Assignments">Assignments</span>
+      </h2>
+
+      <div class="assignment-row">
+        <img
+          class="avatar"
+          src="/sites/csci-1377/assets/static/ditto_mnemonics.NGdON52c.png"
+          alt=""
+        />
+        <p>
+          <span class="decay-token" data-original="Assignment">Assignment</span>
+          <span class="decay-token" data-original="1:">1:</span>
+          <span class="decay-token" data-original="Memory">Memory</span>
+          <span class="decay-token" data-original="Models">Models</span>
+        </p>
+        <div class="assignment-dates">
+          <p>
+            <span class="decay-token" data-original="Out:">Out:</span>
+            <span class="decay-token" data-original="Jan">Jan</span>
+            <span class="decay-token" data-original="29">29</span>
+          </p>
+          <p>
+            <span class="decay-token" data-original="Due:">Due:</span>
+            <span class="decay-token" data-original="Feb">Feb</span>
+            <span class="decay-token" data-original="5">5</span>
+          </p>
+        </div>
+      </div>
+
+      <div class="assignment-row">
+        <img
+          class="avatar"
+          src="/sites/csci-1377/assets/static/ditto_reading.CXm-6PNO.png"
+          alt=""
+        />
+        <p>
+          <span class="decay-token" data-original="Assignment">Assignment</span>
+          <span class="decay-token" data-original="2:">2:</span>
+          <span class="decay-token" data-original="Inverse">Inverse</span>
+          <span class="decay-token" data-original="Reading">Reading</span>
+        </p>
+        <div class="assignment-dates">
+          <p>
+            <span class="decay-token" data-original="Out:">Out:</span>
+            <span class="decay-token" data-original="Feb">Feb</span>
+            <span class="decay-token" data-original="5">5</span>
+          </p>
+          <p>
+            <span class="decay-token" data-original="Due:">Due:</span>
+            <span class="decay-token" data-original="Feb">Feb</span>
+            <span class="decay-token" data-original="12">12</span>
+          </p>
+        </div>
+      </div>
+
+      <div class="assignment-row">
+        <img
+          class="avatar"
+          src="/sites/csci-1377/assets/static/ditto_link.BZxjWCb-.png"
+          alt=""
+        />
+        <p>
+          <span class="decay-token" data-original="Assignment">Assignment</span>
+          <span class="decay-token" data-original="3:">3:</span>
+          <span class="decay-token" data-original="Legal">Legal</span>
+          <span class="decay-token" data-original="Hypertext">Hypertext</span>
+        </p>
+        <div class="assignment-dates">
+          <p>
+            <span class="decay-token" data-original="Out:">Out:</span>
+            <span class="decay-token" data-original="Feb">Feb</span>
+            <span class="decay-token" data-original="17">17</span>
+          </p>
+          <p>
+            <span class="decay-token" data-original="Due:">Due:</span>
+            <span class="decay-token" data-original="Feb">Feb</span>
+            <span class="decay-token" data-original="26">26</span>
+          </p>
+        </div>
+      </div>
+
+      <div class="assignment-row">
+        <img
+          class="avatar"
+          src="/sites/csci-1377/assets/static/ditto_viz.B5rFKJ9_.png"
+          alt=""
+        />
+        <p>
+          <span class="decay-token" data-original="Assignment">Assignment</span>
+          <span class="decay-token" data-original="4:">4:</span>
+          <span class="decay-token" data-original="Visualizing"
+            >Visualizing</span
+          >
+          <span class="decay-token" data-original="Rhode">Rhode</span>
+          <span class="decay-token" data-original="Island">Island</span>
+        </p>
+        <div class="assignment-dates">
+          <p>
+            <span class="decay-token" data-original="Out:">Out:</span>
+            <span class="decay-token" data-original="Feb">Feb</span>
+            <span class="decay-token" data-original="27">27</span>
+          </p>
+          <p>
+            <span class="decay-token" data-original="Due:">Due:</span>
+            <span class="decay-token" data-original="March">March</span>
+            <span class="decay-token" data-original="5">5</span>
+          </p>
+        </div>
+      </div>
+
+      <div class="assignment-row">
+        <img
+          class="avatar"
+          src="/sites/csci-1377/assets/static/ditto_multi.BXU6ACLN.png"
+          alt=""
+        />
+        <p>
+          <span class="decay-token" data-original="Assignment">Assignment</span>
+          <span class="decay-token" data-original="5:">5:</span>
+          <span class="decay-token" data-original="Multimedia">Multimedia</span>
+          <span class="decay-token" data-original="Manimation">Manimation</span>
+        </p>
+        <div class="assignment-dates">
+          <p>
+            <span class="decay-token" data-original="Out:">Out:</span>
+            <span class="decay-token" data-original="March">March</span>
+            <span class="decay-token" data-original="5">5</span>
+          </p>
+          <p>
+            <span class="decay-token" data-original="Due:">Due:</span>
+            <span class="decay-token" data-original="March">March</span>
+            <span class="decay-token" data-original="12">12</span>
+          </p>
+        </div>
+      </div>
+
+      <div class="assignment-row">
+        <img
+          class="avatar"
+          src="/sites/csci-1377/assets/static/ditto_notation.D8D6YiOq.gif"
+          alt=""
+        />
+        <p>
+          <span class="decay-token" data-original="Assignment">Assignment</span>
+          <span class="decay-token" data-original="6:">6:</span>
+          <span class="decay-token" data-original="APLSheet">APLSheet</span>
+        </p>
+        <div class="assignment-dates">
+          <p>
+            <span class="decay-token" data-original="Out:">Out:</span>
+            <span class="decay-token" data-original="April">April</span>
+            <span class="decay-token" data-original="3">3</span>
+          </p>
+          <p>
+            <span class="decay-token" data-original="Due:">Due:</span>
+            <span class="decay-token" data-original="April">April</span>
+            <span class="decay-token" data-original="10">10</span>
+          </p>
+        </div>
+      </div>
+
+      <!-- FINAL PROJECT -->
+      <h2>
+        <span class="decay-token" data-original="Final">Final</span>
+        <span class="decay-token" data-original="Project">Project</span>
+      </h2>
+
+      <div class="assignment-row">
+        <img
+          class="avatar"
+          src="/sites/csci-1377/assets/static/ditto_proposal.DBBlRP8-.gif"
+          alt=""
+        />
+        <p>
+          <span class="decay-token" data-original="Final">Final</span>
+          <span class="decay-token" data-original="Project">Project</span>
+          <span class="decay-token" data-original="Proposal">Proposal</span>
+        </p>
+        <div class="assignment-dates">
+          <p>
+            <span class="decay-token" data-original="Due:">Due:</span>
+            <span class="decay-token" data-original="April">April</span>
+            <span class="decay-token" data-original="7">7</span>
+          </p>
+        </div>
+      </div>
+
+      <div class="assignment-row">
+        <img
+          class="avatar"
+          src="/sites/csci-1377/assets/static/ditto_presentation.cEtO1MFc.png"
+          alt=""
+        />
+        <p>
+          <span class="decay-token" data-original="Final">Final</span>
+          <span class="decay-token" data-original="Presentation"
+            >Presentation</span
+          >
+        </p>
+        <div class="assignment-dates">
+          <p>
+            <span class="decay-token" data-original="Due:">Due:</span>
+            <span class="decay-token" data-original="May">May</span>
+            <span class="decay-token" data-original="5">5</span>
+          </p>
+        </div>
+      </div>
+
+      <div class="assignment-row">
+        <img
+          class="avatar"
+          src="/sites/csci-1377/assets/static/ditto_writeup.BmH4WxIK.png"
+          alt=""
+        />
+        <p>
+          <span class="decay-token" data-original="Final">Final</span>
+          <span class="decay-token" data-original="Writeup">Writeup</span>
+        </p>
+        <div class="assignment-dates">
+          <p>
+            <span class="decay-token" data-original="Due:">Due:</span>
+            <span class="decay-token" data-original="May">May</span>
+            <span class="decay-token" data-original="8">8</span>
+          </p>
+        </div>
+      </div>
+
+      <!-- STAFF -->
+      <h2>
+        <span class="decay-token" data-original="Staff">Staff</span>
+      </h2>
+
+      <div class="staff-grid">
+        <div class="staff-member">
+          <img
+            class="portrait"
+            src="/sites/csci-1377/assets/static/will.B3ikyfoE.jpg"
+            alt="Will Crichton"
+          />
+          <p>
+            <span class="decay-token" data-original="Will">Will</span>
+            <span class="decay-token" data-original="Crichton">Crichton</span>
+          </p>
+          <p>
+            <span class="decay-token" data-original="Hours:">Hours:</span>
+            <span class="decay-token" data-original="Tuesday">Tuesday</span>
+            <span class="decay-token" data-original="1–2pm,">1–2pm,</span>
+            <span class="decay-token" data-original="CIT">CIT</span>
+            <span class="decay-token" data-original="333">333</span>
+          </p>
+        </div>
+        <div class="staff-member">
+          <img
+            class="portrait"
+            src="/sites/csci-1377/assets/static/eleanor.CwYRr2_G.jpg"
+            alt="Eleanor Park"
+          />
+          <p>
+            <span class="decay-token" data-original="Eleanor">Eleanor</span>
+            <span class="decay-token" data-original="Park">Park</span>
+            <span class="decay-token" data-original="(HTA)">(HTA)</span>
+          </p>
+          <p>
+            <span class="decay-token" data-original="Hours:">Hours:</span>
+            <span class="decay-token" data-original="Wednesday">Wednesday</span>
+            <span class="decay-token" data-original="4:30–6pm,">4:30–6pm,</span>
+            <span class="decay-token" data-original="CIT">CIT</span>
+            <span class="decay-token" data-original="102">102</span>
+          </p>
+        </div>
+        <div class="staff-member">
+          <img
+            class="portrait"
+            src="/sites/csci-1377/assets/static/charlene.BNiCmPWE.jpg"
+            alt="Charlene Chen"
+          />
+          <p>
+            <span class="decay-token" data-original="Charlene">Charlene</span>
+            <span class="decay-token" data-original="Chen">Chen</span>
+            <span class="decay-token" data-original="(UTA)">(UTA)</span>
+          </p>
+          <p>
+            <span class="decay-token" data-original="Hours:">Hours:</span>
+            <span class="decay-token" data-original="Tuesday">Tuesday</span>
+            <span class="decay-token" data-original="3–4pm,">3–4pm,</span>
+            <span class="decay-token" data-original="CIT">CIT</span>
+            <span class="decay-token" data-original="102">102</span>
+          </p>
+        </div>
+        <div class="staff-member">
+          <img
+            class="portrait"
+            src="/sites/csci-1377/assets/static/jinho.xM4Xw3kw.jpg"
+            alt="Jinho Lee"
+          />
+          <p>
+            <span class="decay-token" data-original="Jinho">Jinho</span>
+            <span class="decay-token" data-original="Lee">Lee</span>
+            <span class="decay-token" data-original="(UTA)">(UTA)</span>
+          </p>
+          <p>
+            <span class="decay-token" data-original="Hours:">Hours:</span>
+            <span class="decay-token" data-original="Monday">Monday</span>
+            <span class="decay-token" data-original="5–6pm,">5–6pm,</span>
+            <span class="decay-token" data-original="CIT">CIT</span>
+            <span class="decay-token" data-original="102">102</span>
+          </p>
+        </div>
+      </div>
+
+      <!-- POLICIES -->
+      <h2>
+        <span class="decay-token" data-original="Policies">Policies</span>
+      </h2>
+
+      <h4>
+        <span class="decay-token" data-original="Assessment">Assessment</span>
+      </h4>
+      <p>
+        <span class="decay-token" data-original="Grades">Grades</span>
+        <span class="decay-token" data-original="will">will</span>
+        <span class="decay-token" data-original="be">be</span>
+        <span class="decay-token" data-original="determined">determined</span>
+        <span class="decay-token" data-original="by">by</span>
+        <span class="decay-token" data-original="a">a</span>
+        <span class="decay-token" data-original="weighted">weighted</span>
+        <span class="decay-token" data-original="average">average</span>
+        <span class="decay-token" data-original="of">of</span>
+        <span class="decay-token" data-original="assignments">assignments</span>
+        <span class="decay-token" data-original="(50%),(50%),"></span>
+        <span class="decay-token" data-original="a">a</span>
+        <span class="decay-token" data-original="midterm">midterm</span>
+        <span class="decay-token" data-original="(25%)">(25%)</span>
+        <span class="decay-token" data-original="and">and</span>
+        <span class="decay-token" data-original="a">a</span>
+        <span class="decay-token" data-original="final">final</span>
+        <span class="decay-token" data-original="project">project</span>
+        <span class="decay-token" data-original="(25%).">(25%).</span>
+        <span class="decay-token" data-original="The">The</span>
+        <span class="decay-token" data-original="final">final</span>
+        <span class="decay-token" data-original="project">project</span>
+        <span class="decay-token" data-original="will">will</span>
+        <span class="decay-token" data-original="include">include</span>
+        <span class="decay-token" data-original="an">an</span>
+        <span class="decay-token" data-original="ungraded">ungraded</span>
+        <span class="decay-token" data-original="checkpoint">checkpoint</span>
+        <span class="decay-token" data-original="for">for</span>
+        <span class="decay-token" data-original="students">students</span>
+        <span class="decay-token" data-original="to">to</span>
+        <span class="decay-token" data-original="get">get</span>
+        <span class="decay-token" data-original="early">early</span>
+        <span class="decay-token" data-original="feedback">feedback</span>
+        <span class="decay-token" data-original="on">on</span>
+        <span class="decay-token" data-original="their">their</span>
+        <span class="decay-token" data-original="progress.">progress.</span>
+      </p>
+
+      <h4>
+        <span class="decay-token" data-original="Course">Course</span>
+        <span class="decay-token" data-original="Materials">Materials</span>
+      </h4>
+      <p>
+        <span class="decay-token" data-original="There">There</span>
+        <span class="decay-token" data-original="are">are</span>
+        <span class="decay-token" data-original="no">no</span>
+        <span class="decay-token" data-original="costs">costs</span>
+        <span class="decay-token" data-original="to">to</span>
+        <span class="decay-token" data-original="take">take</span>
+        <span class="decay-token" data-original="this">this</span>
+        <span class="decay-token" data-original="course.">course.</span>
+        <span class="decay-token" data-original="All">All</span>
+        <span class="decay-token" data-original="lecture">lecture</span>
+        <span class="decay-token" data-original="notes">notes</span>
+        <span class="decay-token" data-original="will">will</span>
+        <span class="decay-token" data-original="be">be</span>
+        <span class="decay-token" data-original="made">made</span>
+        <span class="decay-token" data-original="freely">freely</span>
+        <span class="decay-token" data-original="available">available</span>
+        <span class="decay-token" data-original="online.">online.</span>
+      </p>
+
+      <h4>
+        <span class="decay-token" data-original="180">180</span>
+        <span class="decay-token" data-original="Hours">Hours</span>
+        <span class="decay-token" data-original="of">of</span>
+        <span class="decay-token" data-original="Work">Work</span>
+      </h4>
+      <p>
+        <span class="decay-token" data-original="Over">Over</span>
+        <span class="decay-token" data-original="14">14</span>
+        <span class="decay-token" data-original="weeks,">weeks,</span>
+        <span class="decay-token" data-original="students">students</span>
+        <span class="decay-token" data-original="will">will</span>
+        <span class="decay-token" data-original="spend">spend</span>
+        <span class="decay-token" data-original="3">3</span>
+        <span class="decay-token" data-original="hours">hours</span>
+        <span class="decay-token" data-original="per">per</span>
+        <span class="decay-token" data-original="week">week</span>
+        <span class="decay-token" data-original="in">in</span>
+        <span class="decay-token" data-original="class">class</span>
+        <span class="decay-token" data-original="(42">(42</span>
+        <span class="decay-token" data-original="hours">hours</span>
+        <span class="decay-token" data-original="total).">total).</span>
+        <span class="decay-token" data-original="Assignments">Assignments</span>
+        <span class="decay-token" data-original="are">are</span>
+        <span class="decay-token" data-original="expected">expected</span>
+        <span class="decay-token" data-original="to">to</span>
+        <span class="decay-token" data-original="take">take</span>
+        <span class="decay-token" data-original="approximately"
+          >approximately</span
+        >
+        <span class="decay-token" data-original="10">10</span>
+        <span class="decay-token" data-original="hours">hours</span>
+        <span class="decay-token" data-original="per">per</span>
+        <span class="decay-token" data-original="week">week</span>
+        <span class="decay-token" data-original="for">for</span>
+        <span class="decay-token" data-original="the">the</span>
+        <span class="decay-token" data-original="first">first</span>
+        <span class="decay-token" data-original="10">10</span>
+        <span class="decay-token" data-original="weeks">weeks</span>
+        <span class="decay-token" data-original="(100">(100</span>
+        <span class="decay-token" data-original="hours).">hours).</span>
+        <span class="decay-token" data-original="The">The</span>
+        <span class="decay-token" data-original="final">final</span>
+        <span class="decay-token" data-original="project">project</span>
+        <span class="decay-token" data-original="is">is</span>
+        <span class="decay-token" data-original="expected">expected</span>
+        <span class="decay-token" data-original="to">to</span>
+        <span class="decay-token" data-original="take">take</span>
+        <span class="decay-token" data-original="approximately"
+          >approximately</span
+        >
+        <span class="decay-token" data-original="10">10</span>
+        <span class="decay-token" data-original="hours">hours</span>
+        <span class="decay-token" data-original="per">per</span>
+        <span class="decay-token" data-original="week">week</span>
+        <span class="decay-token" data-original="for">for</span>
+        <span class="decay-token" data-original="the">the</span>
+        <span class="decay-token" data-original="last">last</span>
+        <span class="decay-token" data-original="4">4</span>
+        <span class="decay-token" data-original="weeks">weeks</span>
+        <span class="decay-token" data-original="(40">(40</span>
+        <span class="decay-token" data-original="hours).">hours).</span>
+        <span class="decay-token" data-original="Total:">Total:</span>
+        <span class="decay-token" data-original="42">42</span>
+        <span class="decay-token" data-original="+">+</span>
+        <span class="decay-token" data-original="100">100</span>
+        <span class="decay-token" data-original="+">+</span>
+        <span class="decay-token" data-original="40">40</span>
+        <span class="decay-token" data-original="=">=</span>
+        <span class="decay-token" data-original="182">182</span>
+        <span class="decay-token" data-original="hrs.">hrs.</span>
+      </p>
+
+      <h4>
+        <span class="decay-token" data-original="Attendance">Attendance</span>
+        <span class="decay-token" data-original="Policies">Policies</span>
+      </h4>
+      <p>
+        <span class="decay-token" data-original="Students">Students</span>
+        <span class="decay-token" data-original="are">are</span>
+        <span class="decay-token" data-original="strongly">strongly</span>
+        <span class="decay-token" data-original="encouraged">encouraged</span>
+        <span class="decay-token" data-original="to">to</span>
+        <span class="decay-token" data-original="attend">attend</span>
+        <span class="decay-token" data-original="lecture">lecture</span>
+        <span class="decay-token" data-original="in-person">in-person</span>
+        <span class="decay-token" data-original="for">for</span>
+        <span class="decay-token" data-original="two">two</span>
+        <span class="decay-token" data-original="reasons.">reasons.</span>
+        <span class="decay-token" data-original="First,">First,</span>
+        <span class="decay-token" data-original="dedicated">dedicated</span>
+        <span class="decay-token" data-original="focus">focus</span>
+        <span class="decay-token" data-original="in">in</span>
+        <span class="decay-token" data-original="a">a</span>
+        <span class="decay-token" data-original="distraction-free"
+          >distraction-free</span
+        >
+        <span class="decay-token" data-original="environment">environment</span>
+        <span class="decay-token" data-original="leads">leads</span>
+        <span class="decay-token" data-original="to">to</span>
+        <span class="decay-token" data-original="better">better</span>
+        <span class="decay-token" data-original="learning">learning</span>
+        <span class="decay-token" data-original="outcomes.">outcomes.</span>
+        <span class="decay-token" data-original="Second,">Second,</span>
+        <span class="decay-token" data-original="Will">Will</span>
+        <span class="decay-token" data-original="enjoys">enjoys</span>
+        <span class="decay-token" data-original="seeing">seeing</span>
+        <span class="decay-token" data-original="the">the</span>
+        <span class="decay-token" data-original="shining">shining</span>
+        <span class="decay-token" data-original="faces">faces</span>
+        <span class="decay-token" data-original="of">of</span>
+        <span class="decay-token" data-original="his">his</span>
+        <span class="decay-token" data-original="students.">students.</span>
+        <span class="decay-token" data-original="However,">However,</span>
+        <span class="decay-token" data-original="attendance">attendance</span>
+        <span class="decay-token" data-original="is">is</span>
+        <span class="decay-token" data-original="not">not</span>
+        <span class="decay-token" data-original="mandatory.">mandatory.</span>
+        <span class="decay-token" data-original="Lectures">Lectures</span>
+        <span class="decay-token" data-original="will">will</span>
+        <span class="decay-token" data-original="be">be</span>
+        <span class="decay-token" data-original="recorded.">recorded.</span>
+      </p>
+
+      <h4>
+        <span class="decay-token" data-original="Extensions">Extensions</span>
+      </h4>
+      <p>
+        <span class="decay-token" data-original="Given">Given</span>
+        <span class="decay-token" data-original="the">the</span>
+        <span class="decay-token" data-original="weekly">weekly</span>
+        <span class="decay-token" data-original="cadence">cadence</span>
+        <span class="decay-token" data-original="of">of</span>
+        <span class="decay-token" data-original="assignments,"
+          >assignments,</span
+        >
+        <span class="decay-token" data-original="students">students</span>
+        <span class="decay-token" data-original="must">must</span>
+        <span class="decay-token" data-original="submit">submit</span>
+        <span class="decay-token" data-original="work">work</span>
+        <span class="decay-token" data-original="on">on</span>
+        <span class="decay-token" data-original="time">time</span>
+        <span class="decay-token" data-original="to">to</span>
+        <span class="decay-token" data-original="avoid">avoid</span>
+        <span class="decay-token" data-original="falling">falling</span>
+        <span class="decay-token" data-original="behind">behind</span>
+        <span class="decay-token" data-original="and">and</span>
+        <span class="decay-token" data-original="to">to</span>
+        <span class="decay-token" data-original="ensure">ensure</span>
+        <span class="decay-token" data-original="grades">grades</span>
+        <span class="decay-token" data-original="are">are</span>
+        <span class="decay-token" data-original="released">released</span>
+        <span class="decay-token" data-original="in">in</span>
+        <span class="decay-token" data-original="a">a</span>
+        <span class="decay-token" data-original="timely">timely</span>
+        <span class="decay-token" data-original="manner.">manner.</span>
+        <span class="decay-token" data-original="All">All</span>
+        <span class="decay-token" data-original="students">students</span>
+        <span class="decay-token" data-original="are">are</span>
+        <span class="decay-token" data-original="provided">provided</span>
+        <span class="decay-token" data-original="three">three</span>
+        <span class="decay-token" data-original="late">late</span>
+        <span class="decay-token" data-original="days">days</span>
+        <span class="decay-token" data-original="which">which</span>
+        <span class="decay-token" data-original="they">they</span>
+        <span class="decay-token" data-original="can">can</span>
+        <span class="decay-token" data-original="use">use</span>
+        <span class="decay-token" data-original="at">at</span>
+        <span class="decay-token" data-original="their">their</span>
+        <span class="decay-token" data-original="discretion,">discretion,</span>
+        <span class="decay-token" data-original="maximum">maximum</span>
+        <span class="decay-token" data-original="of">of</span>
+        <span class="decay-token" data-original="one">one</span>
+        <span class="decay-token" data-original="per">per</span>
+        <span class="decay-token" data-original="assignment.">assignment.</span>
+      </p>
+
+      <h4>
+        <span class="decay-token" data-original="Accessibility"
+          >Accessibility</span
+        >
+        <span class="decay-token" data-original="and">and</span>
+        <span class="decay-token" data-original="Accommodations"
+          >Accommodations</span
+        >
+      </h4>
+      <p>
+        <span class="decay-token" data-original="Brown">Brown</span>
+        <span class="decay-token" data-original="University">University</span>
+        <span class="decay-token" data-original="is">is</span>
+        <span class="decay-token" data-original="committed">committed</span>
+        <span class="decay-token" data-original="to">to</span>
+        <span class="decay-token" data-original="full">full</span>
+        <span class="decay-token" data-original="inclusion">inclusion</span>
+        <span class="decay-token" data-original="of">of</span>
+        <span class="decay-token" data-original="all">all</span>
+        <span class="decay-token" data-original="students.">students.</span>
+        <span class="decay-token" data-original="Please">Please</span>
+        <span class="decay-token" data-original="inform">inform</span>
+        <span class="decay-token" data-original="me">me</span>
+        <span class="decay-token" data-original="early">early</span>
+        <span class="decay-token" data-original="in">in</span>
+        <span class="decay-token" data-original="the">the</span>
+        <span class="decay-token" data-original="term">term</span>
+        <span class="decay-token" data-original="if">if</span>
+        <span class="decay-token" data-original="you">you</span>
+        <span class="decay-token" data-original="may">may</span>
+        <span class="decay-token" data-original="require">require</span>
+        <span class="decay-token" data-original="accommodations."
+          >accommodations.</span
+        >
+        <span class="decay-token" data-original="Reach">Reach</span>
+        <span class="decay-token" data-original="out">out</span>
+        <span class="decay-token" data-original="to">to</span>
+        <span class="decay-token" data-original="Student">Student</span>
+        <span class="decay-token" data-original="Accessibility"
+          >Accessibility</span
+        >
+        <span class="decay-token" data-original="Services">Services</span>
+        <span class="decay-token" data-original="(SAS)">(SAS)</span>
+        <span class="decay-token" data-original="at">at</span>
+        <span class="decay-token" data-original="sas@brown.edu"
+          >sas@brown.edu</span
+        >
+        <span class="decay-token" data-original="or">or</span>
+        <span class="decay-token" data-original="401-863-9588."
+          >401-863-9588.</span
+        >
+      </p>
+
+      <h4>
+        <span class="decay-token" data-original="Academic">Academic</span>
+        <span class="decay-token" data-original="Integrity">Integrity</span>
+        <span class="decay-token" data-original="Policy">Policy</span>
+      </h4>
+      <p>
+        <span class="decay-token" data-original="In">In</span>
+        <span class="decay-token" data-original="general,">general,</span>
+        <span class="decay-token" data-original="it">it</span>
+        <span class="decay-token" data-original="is">is</span>
+        <span class="decay-token" data-original="acceptable">acceptable</span>
+        <span class="decay-token" data-original="to">to</span>
+        <span class="decay-token" data-original="get">get</span>
+        <span class="decay-token" data-original="help">help</span>
+        <span class="decay-token" data-original="to">to</span>
+        <span class="decay-token" data-original="a">a</span>
+        <span class="decay-token" data-original="problem,">problem,</span>
+        <span class="decay-token" data-original="and">and</span>
+        <span class="decay-token" data-original="it">it</span>
+        <span class="decay-token" data-original="is">is</span>
+        <span class="decay-token" data-original="not">not</span>
+        <span class="decay-token" data-original="acceptable">acceptable</span>
+        <span class="decay-token" data-original="to">to</span>
+        <span class="decay-token" data-original="get">get</span>
+        <span class="decay-token" data-original="a">a</span>
+        <span class="decay-token" data-original="solution.">solution.</span>
+        <span class="decay-token" data-original="This">This</span>
+        <span class="decay-token" data-original="rule">rule</span>
+        <span class="decay-token" data-original="applies">applies</span>
+        <span class="decay-token" data-original="no">no</span>
+        <span class="decay-token" data-original="matter">matter</span>
+        <span class="decay-token" data-original="whether">whether</span>
+        <span class="decay-token" data-original="you">you</span>
+        <span class="decay-token" data-original="are">are</span>
+        <span class="decay-token" data-original="consulting">consulting</span>
+        <span class="decay-token" data-original="Google,">Google,</span>
+        <span class="decay-token" data-original="an">an</span>
+        <span class="decay-token" data-original="LLM,">LLM,</span>
+        <span class="decay-token" data-original="a">a</span>
+        <span class="decay-token" data-original="TA,">TA,</span>
+        <span class="decay-token" data-original="a">a</span>
+        <span class="decay-token" data-original="fellow">fellow</span>
+        <span class="decay-token" data-original="student,">student,</span>
+        <span class="decay-token" data-original="or">or</span>
+        <span class="decay-token" data-original="any">any</span>
+        <span class="decay-token" data-original="other">other</span>
+        <span class="decay-token" data-original="resource.">resource.</span>
+      </p>
+      <ul>
+        <li>
+          <span class="decay-token" data-original="Group">Group</span>
+          <span class="decay-token" data-original="work:">work:</span>
+          <span class="decay-token" data-original="It">It</span>
+          <span class="decay-token" data-original="is">is</span>
+          <span class="decay-token" data-original="acceptable">acceptable</span>
+          <span class="decay-token" data-original="to">to</span>
+          <span class="decay-token" data-original="work">work</span>
+          <span class="decay-token" data-original="on">on</span>
+          <span class="decay-token" data-original="all">all</span>
+          <span class="decay-token" data-original="problem">problem</span>
+          <span class="decay-token" data-original="sets">sets</span>
+          <span class="decay-token" data-original="in">in</span>
+          <span class="decay-token" data-original="a">a</span>
+          <span class="decay-token" data-original="group.">group.</span>
+          <span class="decay-token" data-original="It">It</span>
+          <span class="decay-token" data-original="is">is</span>
+          <span class="decay-token" data-original="not">not</span>
+          <span class="decay-token" data-original="acceptable">acceptable</span>
+          <span class="decay-token" data-original="for">for</span>
+          <span class="decay-token" data-original="one">one</span>
+          <span class="decay-token" data-original="person">person</span>
+          <span class="decay-token" data-original="to">to</span>
+          <span class="decay-token" data-original="solve">solve</span>
+          <span class="decay-token" data-original="a">a</span>
+          <span class="decay-token" data-original="problem">problem</span>
+          <span class="decay-token" data-original="and">and</span>
+          <span class="decay-token" data-original="another">another</span>
+          <span class="decay-token" data-original="to">to</span>
+          <span class="decay-token" data-original="copy">copy</span>
+          <span class="decay-token" data-original="their">their</span>
+          <span class="decay-token" data-original="solution.">solution.</span>
+        </li>
+        <li>
+          <span class="decay-token" data-original="The">The</span>
+          <span class="decay-token" data-original="internet:">internet:</span>
+          <span class="decay-token" data-original="It">It</span>
+          <span class="decay-token" data-original="is">is</span>
+          <span class="decay-token" data-original="generally">generally</span>
+          <span class="decay-token" data-original="acceptable">acceptable</span>
+          <span class="decay-token" data-original="to">to</span>
+          <span class="decay-token" data-original="use">use</span>
+          <span class="decay-token" data-original="search">search</span>
+          <span class="decay-token" data-original="engines">engines</span>
+          <span class="decay-token" data-original="like">like</span>
+          <span class="decay-token" data-original="Google">Google</span>
+          <span class="decay-token" data-original="and">and</span>
+          <span class="decay-token" data-original="help">help</span>
+          <span class="decay-token" data-original="sites">sites</span>
+          <span class="decay-token" data-original="like">like</span>
+          <span class="decay-token" data-original="StackOverflow."
+            >StackOverflow.</span
+          >
+          <span class="decay-token" data-original="It">It</span>
+          <span class="decay-token" data-original="is">is</span>
+          <span class="decay-token" data-original="not">not</span>
+          <span class="decay-token" data-original="acceptable">acceptable</span>
+          <span class="decay-token" data-original="to">to</span>
+          <span class="decay-token" data-original="search">search</span>
+          <span class="decay-token" data-original="for">for</span>
+          <span class="decay-token" data-original="complete">complete</span>
+          <span class="decay-token" data-original="solutions">solutions</span>
+          <span class="decay-token" data-original="to">to</span>
+          <span class="decay-token" data-original="all">all</span>
+          <span class="decay-token" data-original="or">or</span>
+          <span class="decay-token" data-original="significant"
+            >significant</span
+          >
+          <span class="decay-token" data-original="portions">portions</span>
+          <span class="decay-token" data-original="of">of</span>
+          <span class="decay-token" data-original="an">an</span>
+          <span class="decay-token" data-original="assignment."
+            >assignment.</span
+          >
+        </li>
+        <li>
+          <span class="decay-token" data-original="LLMs:">LLMs:</span>
+          <span class="decay-token" data-original="It">It</span>
+          <span class="decay-token" data-original="is">is</span>
+          <span class="decay-token" data-original="generally">generally</span>
+          <span class="decay-token" data-original="acceptable">acceptable</span>
+          <span class="decay-token" data-original="to">to</span>
+          <span class="decay-token" data-original="use">use</span>
+          <span class="decay-token" data-original="AI-based">AI-based</span>
+          <span class="decay-token" data-original="coding">coding</span>
+          <span class="decay-token" data-original="tools">tools</span>
+          <span class="decay-token" data-original="such">such</span>
+          <span class="decay-token" data-original="as">as</span>
+          <span class="decay-token" data-original="ChatGPT,">ChatGPT,</span>
+          <span class="decay-token" data-original="Claude,">Claude,</span>
+          <span class="decay-token" data-original="and">and</span>
+          <span class="decay-token" data-original="Cursor">Cursor</span>
+          <span class="decay-token" data-original="for">for</span>
+          <span class="decay-token" data-original="getting">getting</span>
+          <span class="decay-token" data-original="help">help</span>
+          <span class="decay-token" data-original="or">or</span>
+          <span class="decay-token" data-original="generating">generating</span>
+          <span class="decay-token" data-original="small">small</span>
+          <span class="decay-token" data-original="snippets">snippets</span>
+          <span class="decay-token" data-original="of">of</span>
+          <span class="decay-token" data-original="code.">code.</span>
+          <span class="decay-token" data-original="However,">However,</span>
+          <span class="decay-token" data-original="you">you</span>
+          <span class="decay-token" data-original="should">should</span>
+          <span class="decay-token" data-original="not">not</span>
+          <span class="decay-token" data-original="use">use</span>
+          <span class="decay-token" data-original="LLMs">LLMs</span>
+          <span class="decay-token" data-original="to">to</span>
+          <span class="decay-token" data-original="skip">skip</span>
+          <span class="decay-token" data-original="the">the</span>
+          <span class="decay-token" data-original="parts">parts</span>
+          <span class="decay-token" data-original="of">of</span>
+          <span class="decay-token" data-original="a">a</span>
+          <span class="decay-token" data-original="problem">problem</span>
+          <span class="decay-token" data-original="related">related</span>
+          <span class="decay-token" data-original="to">to</span>
+          <span class="decay-token" data-original="the">the</span>
+          <span class="decay-token" data-original="learning">learning</span>
+          <span class="decay-token" data-original="goals">goals</span>
+          <span class="decay-token" data-original="of">of</span>
+          <span class="decay-token" data-original="the">the</span>
+          <span class="decay-token" data-original="course.">course.</span>
+        </li>
+      </ul>
+    </main>
+    <script src="/scripts/decay.js"></script>
+  </body>
+</html>

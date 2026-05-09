@@ -3,8 +3,9 @@
 import type React from "react";
 import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
+import { type SetId } from "./sets";
 
-const TIME_BUDGET = 180;
+export const TIME_BUDGET = 30;
 const MAX_WORD_BUDGET = 500;
 const IMAGE_WORD_COST = 20;
 
@@ -69,29 +70,38 @@ export function usePreservation(currentUrl?: React.RefObject<string>) {
   );
   const idCounter = useRef(0);
   // const addPreserved = usePreservationStore((s) => s.addPreserved);
+  const [currentSetIndex, setCurrentSetIndex] = useState(0);
+  const currentSetId = (currentSetIndex + 1) as SetId;
+  const currentSetIndexRef = useRef(currentSetIndex);
+  currentSetIndexRef.current = currentSetIndex;
+  const [phase, setPhase] = useState<"intro" | "explore" | "outro">("intro");
+  const [phaseScreen, setPhaseScreen] = useState(0);
+  const phaseScreenRef = useRef(phaseScreen);
+  phaseScreenRef.current = phaseScreen;
 
+  // decrement timer, but only during explore phase
   useEffect(() => {
+    if (phase !== "explore") return;
     const interval = setInterval(() => {
-      setTimeLeft((t) => {
-        if (t <= 1) {
-          clearInterval(interval);
-          sessionStorage.setItem("preserved", JSON.stringify(preserved));
-          router.push("/summary");
-          return 0;
-        }
-        return t - 1;
-      });
+      setTimeLeft((t) => Math.max(0, t - 1));
     }, 1000);
     return () => clearInterval(interval);
-  }, [preserved, router]);
+  }, [currentSetIndex, phase]);
 
-  // also autonavigate to summary page when budget runs out?
   useEffect(() => {
-  if (wordBudgetLeft <= 0 && preserved.length > 0) {
-    sessionStorage.setItem("preserved", JSON.stringify(preserved));
-    router.push("/summary");
-  }
-}, [wordBudgetLeft, preserved, router]);
+    if (wordBudgetLeft !== 0) return;
+    if (preserved.length === 0) return;
+    if (phase !== "explore") return;
+    setPhase("outro");
+    setPhaseScreen(0);
+  }, [wordBudgetLeft, preserved, phase]);
+
+  useEffect(() => {
+    setTimeLeft(TIME_BUDGET);
+    setWordBudget(MAX_WORD_BUDGET);
+    setPhaseScreen(0);
+    setPhase(currentSetIndex === 0 ? "intro" : "explore");
+  }, [currentSetIndex]);
 
   function onSelection(text: string, rect: DOMRect) {
     if (!text || text.length < 1) return;
@@ -99,7 +109,7 @@ export function usePreservation(currentUrl?: React.RefObject<string>) {
     setSelection(text);
     const wc = countWords(text);
     setSelectionWordCount(wc);
-    setPopupPos({ x: rect.left + rect.width / 2, y: rect.top });
+    setPopupPos({ x: rect.left, y: rect.top });
   }
 
   function onImageSelection(src: string, rect: DOMRect) {
@@ -107,8 +117,15 @@ export function usePreservation(currentUrl?: React.RefObject<string>) {
     setSelection(src);
     // images have fixed cost
     setSelectionWordCount(IMAGE_WORD_COST);
-    setPopupPos({ x: rect.left + rect.width / 2, y: rect.top });
+    setPopupPos({ x: rect.left, y: rect.top });
   }
+
+  useEffect(() => {
+    if (timeLeft !== 0) return;
+    setSelection(null);
+    setPopupPos(null);
+    setSelectionWordCount(0);
+  }, [timeLeft]);
 
   function onClearSelection() {
     setSelection(null);
@@ -124,12 +141,13 @@ export function usePreservation(currentUrl?: React.RefObject<string>) {
 
     if (selectionKind === "image") {
       const cost = IMAGE_WORD_COST;
-      if (cost > wordBudgetLeft) {
-        // Cannot save
-        // TODO: Break selection here? Make red after selection budget exceeded?
-        return;
-      }
-      const entry: Preserved = { id, url, kind: "image", imageSrc: selection, savedAt };
+      const entry: Preserved = {
+        id,
+        url,
+        kind: "image",
+        imageSrc: selection,
+        savedAt,
+      };
       setPreserved((prev) => [...prev, entry]);
       setWordBudget((w) => Math.max(0, w - cost));
     } else {
@@ -159,17 +177,11 @@ export function usePreservation(currentUrl?: React.RefObject<string>) {
       }
     }
 
-    // const entry: Preserved =
-    //   selectionKind === "image"
-    //     ? { id, url, kind: "image", imageSrc: selection, savedAt }
-    //     : { id, url, kind: "text", text: selection, savedAt };
-    // setPreserved((prev) => [...prev, entry]);
-    // // addPreserved(entry);
-    // setBudget((b) => b - 1);
-    // setSelection(null);
-    // setPopupPos(null);
-    // setSelectionKind("text");
-    // window.getSelection()?.removeAllRanges();
+    // clear selection after save
+    setSelection(null);
+    setPopupPos(null);
+    setSelectionWordCount(0);
+    window.getSelection()?.removeAllRanges();
   }
 
   function dismiss() {
@@ -178,17 +190,49 @@ export function usePreservation(currentUrl?: React.RefObject<string>) {
     window.getSelection()?.removeAllRanges();
   }
 
+  function advanceFromIntro() {
+    const introMaxScreen = currentSetIndex === 0 ? 2 : 0;
+    if (phaseScreen < introMaxScreen) {
+      setPhaseScreen((s) => s + 1);
+    } else {
+      setPhase("explore");
+      setPhaseScreen(0);
+    }
+  }
+
+  function onDecayComplete() {
+    setPhase("outro");
+    setPhaseScreen(0);
+  }
+
+  function continueFromOutro() {
+    const outroMaxScreen = currentSetIndexRef.current < 2 ? 1 : 2;
+    if (phaseScreenRef.current < outroMaxScreen) {
+      setPhaseScreen((s) => s + 1);
+    } else if (currentSetIndexRef.current < 2) {
+      setCurrentSetIndex((i) => i + 1);
+    } else {
+      sessionStorage.setItem("preserved", JSON.stringify(preserved));
+      router.push("/summary");
+    }
+  }
   return {
     timeLeft,
     budgetLeft: wordBudgetLeft,
     preserved,
     selection,
     selectionKind,
+    selectionWordCount,
     popupPos,
+    currentSetId,
+    phaseScreen,
     onSelection,
     onImageSelection,
     onClearSelection,
     save,
-    dismiss,
+    phase,
+    advanceFromIntro,
+    onDecayComplete,
+    continueFromOutro,
   };
 }

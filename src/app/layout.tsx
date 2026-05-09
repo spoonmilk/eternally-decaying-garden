@@ -1,20 +1,11 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
-
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
-});
-
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
-});
+import StyledComponentsRegistry from "./registry";
 
 export const metadata: Metadata = {
   title: "The Internet as an Eternally Decaying Garden",
-  description: "An interactive experience about link rot and digital preservation.",
+  description:
+    "An interactive experience about link rot and digital preservation.",
 };
 
 export default function RootLayout({
@@ -23,11 +14,16 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html
-      lang="en"
-      className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
-    >
-      <body className="min-h-full flex flex-col">{children}</body>
+    <html lang="en">
+      <head>
+        <link
+          rel="stylesheet"
+          href="https://use.typekit.net/ewq3amz.css"
+        ></link>
+      </head>
+      <body className="min-h-full flex flex-col">
+        <StyledComponentsRegistry>{children}</StyledComponentsRegistry>
+      </body>
     </html>
   );
 }

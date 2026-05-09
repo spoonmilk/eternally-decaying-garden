@@ -1,9 +1,0 @@
-The indelible process of forgetting is an ingrained element of human experience. Your vast interiority will one day leave, with your death, in its majority. Though we have yet to find any cure for the cause—that is, death, we have some recourse for the fading of information in the form of archival work, whether personal (journaling) or institutional (interview records, biographies, etc.). In this archival process, there is a fundamental question of fidelity. We may accept that the archival process degrades information in some manner—we implicitly do not expect two-dimensional media to capture the intricacies of lived space, and we may accept that we are incapable of coloring monochrome memories with any quality of prose, but we trust in the archival quality of the medium we project onto. That is to say, once all information is transferred into a medium, the medium will not atrophy in its ability to store information.
-
-
-This makes the Internet a particular case of interest for those archivally inclined few. On one hand, a particular conception of the Internet as a medium has emerged—that of an omnipotent or atemporal medium through which information is entered and crystallized thereafter; the common utterance of “the internet never forgets” permeates dialogue on our interactions with the internet as a social system. But the Internet does forget. It does so remarkably quickly when interest, capital, or personnel do not actively seek its survival. The internet is a churning thing, devouring and spitting out information with remarkable efficiency. It photosynthesizes the common zeitgeist, and its leaves decay in darkness.
-
-
-We will examine some small part of this phenomenon. You will take on the role of archivist in a crumbling world, and, in the process, explore the life and death of the Internet. 
-
-

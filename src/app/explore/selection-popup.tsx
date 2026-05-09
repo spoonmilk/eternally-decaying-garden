@@ -5,42 +5,68 @@ interface SelectionPopupProps {
   pos: { x: number; y: number };
   budgetLeft: number;
   timeLeft: number;
+  selectionWordCount: number;
   onSave: () => void;
-  onDismiss: () => void;
 }
 
 export default function SelectionPopup({
   selectionKind,
   pos,
   budgetLeft,
-  timeLeft,
+  selectionWordCount,
   onSave,
-  onDismiss,
 }: SelectionPopupProps) {
   return (
     <div
+      className="highlight-button"
       style={{
-        position: "fixed",
         left: pos.x,
         top: pos.y,
-        transform: "translate(-50%, -100%)",
-        background: "white",
-        padding: "6px 10px",
-        display: "flex",
-        gap: 8,
-        alignItems: "center",
+        transform: "translate(0%, calc(-100% - 8px))",
       }}
     >
       {budgetLeft === 0 ? (
-        <span style={{ color: "red" }}>No budget left</span>
-      ) : timeLeft === 0 ? (
-        <span style={{ color: "red" }}>Time expired</span>
+        <span style={{ color: "red", fontWeight: "500" }}>No budget left</span>
+      ) : selectionWordCount > budgetLeft ? (
+        <div className="button-text" style={{ color: "red" }}>
+          <span>Over budget</span>
+          <span style={{ fontSize: "16px", fontWeight: "300" }}>
+            ({selectionWordCount} words)
+          </span>
+        </div>
       ) : (
         <button type="button" onClick={onSave}>
-          {selectionKind === "image" ? "Save Image" : "Save"}
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="20"
+            height="20"
+            viewBox="0 0 20 20"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          >
+            <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+            <path d="M12 5l0 14" />
+            <path d="M5 12l14 0" />
+          </svg>
+          <div className="button-text">
+            {selectionKind === "image" ? "Save Image" : "Save Text"}
+            {selectionWordCount > 0 && (
+              <span
+                style={{
+                  color: "var(--text-secondary)",
+                  fontSize: "16px",
+                  fontWeight: "300",
+                }}
+              >
+                ({selectionWordCount} words)
+              </span>
+            )}
+          </div>
         </button>
       )}
-      <button type="button" onClick={onDismiss}>✕</button>
     </div>
   );
 }

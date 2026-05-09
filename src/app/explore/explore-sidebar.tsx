@@ -1,71 +1,88 @@
 "use client";
 
 import type { Preserved } from "./use-preservation";
+import { SET_IDS, type SetId, getSetForUrl } from "./sets";
 
 interface ExploreSidebarProps {
   preserved: Preserved[];
+  openSetIds: SetId[];
+  onToggleSet: (setId: SetId) => void;
 }
 
-export default function ExploreSidebar({ preserved }: ExploreSidebarProps) {
+export default function ExploreSidebar({
+  preserved,
+  openSetIds,
+  onToggleSet,
+}: ExploreSidebarProps) {
   return (
-    <aside
-      style={{
-        display: "flex",
-        flexDirection: "column",
-        width: 240,
-        overflow: "hidden",
-      }}
-    >
-      <div style={{ borderBottom: "1px solid", padding: 8 }}>
-        Preserved ({preserved.length})
-      </div>
+    <aside className="right">
+      <div className="archive-header">Archive</div>
+      <div className="archive-content archive-accordions">
+        {SET_IDS.map((setId) => {
+          const itemsInSet = preserved.filter(
+            (item) => getSetForUrl(item.url) === setId,
+          );
 
-      <ul
-        style={{
-          flex: 1,
-          overflow: "auto",
-          padding: 8,
-          listStyle: "none",
-          margin: 0,
-        }}
-      >
-        {preserved.map((item) => {
-          const previewText =
-            item.kind === "text" && item.text
-              ? item.text.length > 500
-                ? item.text.slice(0, 500) + "…"
-                : item.text
-              : null;
           return (
-            <li
-              key={item.id}
-              style={{ border: "1px solid", padding: 8, marginBottom: 8 }}
+            <div
+              key={setId}
+              className={`archive-accordion${openSetIds.includes(setId) ? " is-open" : ""}`}
             >
-              {item.kind === "image" ? (
-                <img
-                  src={item.imageSrc}
-                  alt=""
-                  style={{ width: "100%", marginTop: 4 }}
-                />
-              ) : (
-                <p style={{ fontSize: 9 }}>"{previewText}"</p>
+              <div
+                className="archive-accordion-summary"
+                onClick={() => onToggleSet(setId)}
+              >
+                <div className="summary-left">
+                  <span className="set-name">{`Act ${setId}`}</span>
+                  <span className="set-count">{`(${itemsInSet.length})`}</span>
+                </div>
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="24"
+                  height="24"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth={1.5}
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  className="icon icon-tabler icons-tabler-outline icon-tabler-chevron-down chevron"
+                >
+                  <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                  <path d="M6 9l6 6l6 -6" />
+                </svg>
+              </div>
+              {openSetIds.includes(setId) && (
+                <ul className="archive-set-list">
+                  {itemsInSet.length === 0 ? (
+                    <li>Nothing has been saved yet.</li>
+                  ) : (
+                    itemsInSet.map((item) => {
+                      const displayUrl = item.url.replace("https://", "");
+                      let previewText: string | null = null;
+                      if (item.kind === "text" && item.text) {
+                        previewText =
+                          item.text.length > 500
+                            ? item.text.slice(0, 500) + "…"
+                            : item.text;
+                      }
+                      return (
+                        <li key={item.id}>
+                          {item.kind === "image" ? (
+                            <img src={item.imageSrc} alt="" />
+                          ) : (
+                            <p>{previewText}</p>
+                          )}
+                          <span className="url">{displayUrl}</span>
+                        </li>
+                      );
+                    })
+                  )}
+                </ul>
               )}
-            </li>
+            </div>
           );
         })}
-      </ul>
-
-      <div
-        style={{
-          borderTop: "1px solid",
-          padding: 8,
-          display: "flex",
-          flexDirection: "column",
-          gap: 4,
-        }}
-      >
-        <button type="button">+ Highlight</button>
-        <button type="button">+ Note</button>
       </div>
     </aside>
   );
