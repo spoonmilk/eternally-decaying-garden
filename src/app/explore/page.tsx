@@ -38,13 +38,13 @@ const PROMPTS: Record<number, ReflectionPrompt[]> = {
   1: [
     {
       id: "1a",
-      body: "What on these pages feels worth remembering? What would you let decay?",
+      body: "What makes a page worthwhile? When do you choose to 'bookmark' or 'favorite' pages, posts?",
       triggerPhase: 2,
       position: PROMPT_POS[0],
     },
     {
       id: "1b",
-      body: "The web forgets faster than we do. What does it mean to outlive your own archive?",
+      body: "What does it mean to outlive your own archive?",
       triggerPhase: 4,
       position: PROMPT_POS[1],
     },
@@ -52,13 +52,13 @@ const PROMPTS: Record<number, ReflectionPrompt[]> = {
   2: [
     {
       id: "2a",
-      body: "A broken link is a kind of death. What have you lost to link rot, knowingly or not?",
+      body: "A broken link is a kind of death. Are the sites you visited as a kid still around?",
       triggerPhase: 2,
       position: PROMPT_POS[0],
     },
     {
       id: "2b",
-      body: "If a page exists but no one can reach it, does it exist at all?",
+      body: "How much of the web is accessible through your search engine? Are there routes you know only by links?",
       triggerPhase: 4,
       position: PROMPT_POS[1],
     },
@@ -72,7 +72,7 @@ const PROMPTS: Record<number, ReflectionPrompt[]> = {
     },
     {
       id: "3b",
-      body: "The web preserves what gets attention. What gets attention is rarely what demands justice. What would it take to change that?",
+      body: "What narratives fade the fastest? Which remain present over time?",
       triggerPhase: 4,
       position: PROMPT_POS[1],
     },
